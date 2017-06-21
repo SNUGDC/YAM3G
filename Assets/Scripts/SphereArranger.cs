@@ -7,11 +7,13 @@ public class SphereArranger : MonoBehaviour
 	public GameObject[] sphere;
 	public GameObject[] spherePrefab;
 
+    private GameObject Arcball;
 	private Vector3[] bundleToCheck;
 
 	private void Start()
 	{
-		sphere = new GameObject[64];
+        Arcball = GameObject.Find("Arcball");
+        sphere = new GameObject[64];
 		bundleToCheck = new Vector3[96];
 		AssignBundleToCheck();
 
@@ -51,7 +53,7 @@ public class SphereArranger : MonoBehaviour
 		y = (num % 16) / 4;
 		x = (num % 16) % 4;
 
-		sphere[num] = Instantiate(spherePrefab[rand], new Vector3(x - 1.5f, y - 1.5f, z - 1.5f), new Quaternion(0, 0, 0, 0));
+		sphere[num] = Instantiate(spherePrefab[rand], new Vector3(x - 1.5f, y - 1.5f, z - 1.5f), new Quaternion(0, 0, 0, 0), Arcball.transform);
 	}
 
 	private void Check3AndDestroy(Vector3 spheresToCheck) //3개 인접한 것이 있는지 확인하고 같으면 부순다!
