@@ -13,11 +13,11 @@ public class FieldController : MonoBehaviour
 	public GameObject[] CirclePrefabs;
 
 	private GameObject[] Circles;
-	private int[,,] Field;
+	private int?[,,] Field;
 
 	private void Start()
 	{
-		Field = new int[4, 4, 4];
+		Field = new int?[4, 4, 4];
 		Circles = new GameObject[64];
 		isMovingState = false;
 
@@ -70,6 +70,10 @@ public class FieldController : MonoBehaviour
 		{
 			CheckAndBoom();
 		}
+		else if(Input.GetKeyDown(KeyCode.D))
+		{
+			ComeDown();
+		}
 	}
 	private void InitializeField()
 	{
@@ -98,14 +102,16 @@ public class FieldController : MonoBehaviour
 			{
 				for(int z = 0; z < 4; z++)
 				{
-					Circles[x + 4 * y + 16 * z] = Instantiate(CirclePrefabs[Field[x, y, z]], new Vector3 (6*x-9, 6*y-9, 6*z-9), new Quaternion(0, 0, 0, 0));
+					if(Field[x,y,z].HasValue)
+						Circles[x + 4 * y + 16 * z] = Instantiate(CirclePrefabs[Field[x, y, z].Value], new Vector3 (6*x-9, 6*y-9, 6*z-9), new Quaternion(0, 0, 0, 0));
 				}
 			}
 		}
 
 		foreach(GameObject circle in Circles)
 		{
-			circle.GetComponent<CircleController>().ScaleAdjustment();
+			if(circle != null)
+				circle.GetComponent<CircleController>().ScaleAdjustment();
 		}
 	}
 
@@ -119,7 +125,7 @@ public class FieldController : MonoBehaviour
 			{
 				for(int z = 0; z < 4; z++)
 				{
-					TempField[x,y,z] = Field[x,y,z];
+					TempField[x,y,z] = Field[x,y,z].Value;
 				}
 			}
 		}
@@ -191,7 +197,7 @@ public class FieldController : MonoBehaviour
 			{
 				for(int z = 0; z < 4; z++)
 				{
-					TempField[x,y,z] = Field[x,y,z];
+					TempField[x,y,z] = Field[x,y,z].Value;
 				}
 			}
 		}
@@ -241,9 +247,25 @@ public class FieldController : MonoBehaviour
 		isMovingState = false;
 	}
 
+	enum BoomResult
+	{
+		Boom,
+		UnBoom
+	}
+
 	private void CheckAndBoom()
 	{
-		int[,,] boomField = new int[4,4,4];
+		BoomResult[,,] boomField = new BoomResult[4,4,4];
+		for(int x = 0; x < 4; x++)
+		{
+			for(int y = 0; y < 4; y++)
+			{
+				for(int z = 0; z < 4; z++)
+				{
+					boomField[x,y,z] = BoomResult.UnBoom;
+				}
+			}
+		}
 
 		for(int x = 0; x < 4; x++)
 		{
@@ -258,14 +280,6 @@ public class FieldController : MonoBehaviour
 			}
 		}
 
-		for(int y = 0; y < 4; y++)
-		{
-			for(int z = 0; z < 4; z++)
-			{
-				Debug.Log("(0, " + y + ", " + z + ")의 boomField 값은 " + boomField[0, y, z]);
-			}
-		}
-
 		for(int x = 0; x < 4; x++)
 		{
 			for(int y = 0; y < 4; y++)
@@ -273,15 +287,16 @@ public class FieldController : MonoBehaviour
 				for(int z = 0; z < 4; z++)
 				{
 					if(boomField[x, y, z] == 0)
-					{
-						Destroy(Circles[x + 4 * y + 16 * z]);
+					{  
+						Field[x,y,z] = null;
+						Print();
 					}
 				}
 			}
 		}
 	}
 
-	private void CheckXAxis(int x, int y, int z, int [,,] boomField) //x축으로 확인
+	private void CheckXAxis(int x, int y, int z, BoomResult [,,] boomField) //x축으로 확인
 	{
 		//오른오른쪽의 공이 필드에 속해 있는지 확인
 		if(x + 2 >= Field.GetLength(0))
@@ -290,26 +305,26 @@ public class FieldController : MonoBehaviour
 		//오른쪽에 있는 애랑 색이 같지 않다면 끝낸다.
 		if(Field[x, y, z] != Field[x+1, y, z])
 		{
-			if(boomField[x,y,z] == 0)
+			if(boomField[x,y,z] == BoomResult.Boom)
 				return;
-			boomField[x,y,z] = 1;
+			boomField[x,y,z] = BoomResult.UnBoom;
 			return;
 		}
 		//오른쪽에 있는 애랑 색이 같지만 오른오른쪽에 있는 애랑 색이 다르면
 		if(Field[x, y, z] != Field[x+2, y, z])
 		{
-			if(boomField[x, y, z] == 0)
+			if(boomField[x, y, z] == BoomResult.Boom)
 				return;
-			boomField[x, y, z] = 1;
+			boomField[x, y, z] = BoomResult.UnBoom;
 			return;
 		}
 		//오른쪽과 오른오른쪽에 있는애랑 색이 모두 같다면
-		boomField[x, y, z] = 0;
-		boomField[x+1, y, z] = 0;
-		boomField[x+2, y, z] = 0;
+		boomField[x, y, z] = BoomResult.Boom;
+		boomField[x+1, y, z] = BoomResult.Boom;
+		boomField[x+2, y, z] = BoomResult.Boom;
 	}
 
-	private void CheckYAxis(int x, int y, int z, int [,,] boomField) //y축으로 확인
+	private void CheckYAxis(int x, int y, int z, BoomResult [,,] boomField) //y축으로 확인
 	{
 		//위위쪽의 공이 필드에 속해 있는지 확인
 		if(y + 2 >= Field.GetLength(1))
@@ -318,26 +333,26 @@ public class FieldController : MonoBehaviour
 		//위쪽에 있는 애랑 색이 같지 않다면 끝낸다.
 		if(Field[x, y, z] != Field[x, y+1, z])
 		{
-			if(boomField[x,y,z] == 0)
+			if(boomField[x,y,z] == BoomResult.Boom)
 				return;
-			boomField[x,y,z] = 1;
+			boomField[x,y,z] = BoomResult.UnBoom;
 			return;
 		}
 		//위쪽에 있는 애랑 색이 같지만 위위쪽에 있는 애랑 색이 다르면
 		if(Field[x, y, z] != Field[x, y+2, z])
 		{
-			if(boomField[x, y, z] == 0)
+			if(boomField[x, y, z] == BoomResult.Boom)
 				return;
-			boomField[x, y, z] = 1;
+			boomField[x, y, z] = BoomResult.UnBoom;
 			return;
 		}
 		//위쪽과 위위쪽에 있는애랑 색이 모두 같다면
-		boomField[x, y, z] = 0;
-		boomField[x, y+1, z] = 0;
-		boomField[x, y+2, z] = 0;
+		boomField[x, y, z] = BoomResult.Boom;
+		boomField[x, y+1, z] = BoomResult.Boom;
+		boomField[x, y+2, z] = BoomResult.Boom;
 	}
 
-	private void CheckZAxis(int x, int y, int z, int [,,] boomField) //z축으로 확인
+	private void CheckZAxis(int x, int y, int z, BoomResult [,,] boomField) //z축으로 확인
 	{
 		//뒤뒤쪽의 공이 필드에 속해 있는지 확인
 		if(z + 2 >= Field.GetLength(2))
@@ -346,22 +361,53 @@ public class FieldController : MonoBehaviour
 		//뒤쪽에 있는 애랑 색이 같지 않다면 끝낸다.
 		if(Field[x, y, z] != Field[x, y, z+1])
 		{
-			if(boomField[x,y,z] == 0)
+			if(boomField[x,y,z] == BoomResult.Boom)
 				return;
-			boomField[x,y,z] = 1;
+			boomField[x,y,z] = BoomResult.UnBoom;
 			return;
 		}
 		//뒤쪽에 있는 애랑 색이 같지만 뒤뒤쪽에 있는 애랑 색이 다르면
 		if(Field[x, y, z] != Field[x, y, z+2])
 		{
-			if(boomField[x, y, z] == 0)
+			if(boomField[x, y, z] == BoomResult.Boom)
 				return;
-			boomField[x, y, z] = 1;
+			boomField[x, y, z] = BoomResult.UnBoom;
 			return;
 		}
 		//뒤쪽과 뒤뒤쪽에 있는애랑 색이 모두 같다면
-		boomField[x, y, z] = 0;
-		boomField[x, y, z+1] = 0;
-		boomField[x, y, z+2] = 0;
+		boomField[x, y, z] = BoomResult.Boom;
+		boomField[x, y, z+1] = BoomResult.Boom;
+		boomField[x, y, z+2] = BoomResult.Boom;
+	}
+
+	private void ComeDown()
+	{
+		for(int x = 0; x < 4; x++)
+		{
+			for(int z = 0; z < 4; z++)
+			{
+				ComeDownOneAxis(x, z);
+			}
+		}
+
+		Print();
+	}
+
+	private void ComeDownOneAxis(int x, int z)
+	{
+		for(int y = 0; y < Field.GetLength(1); y++)
+		{
+			if(Field[x, y, z] == null)
+			{
+				for(int above = 1; y + above < Field.GetLength(1); above++)
+				{
+					if(Field[x, y + above, z].HasValue)
+					{
+						Field[x, y, z] = Field[x, y + above, z];
+						Field[x, y+above, z] = null;
+					}
+				}
+			}
+		}
 	}
 }
