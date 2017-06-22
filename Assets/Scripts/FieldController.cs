@@ -74,6 +74,10 @@ public class FieldController : MonoBehaviour
 		{
 			ComeDown();
 		}
+		else if(Input.GetKeyDown(KeyCode.R))
+		{
+			Refill();
+		}
 	}
 	private void InitializeField()
 	{
@@ -405,9 +409,29 @@ public class FieldController : MonoBehaviour
 					{
 						Field[x, y, z] = Field[x, y + above, z];
 						Field[x, y+above, z] = null;
+						break;
 					}
 				}
 			}
 		}
+	}
+
+	private void Refill()
+	{
+		for(int x = 0; x < 4; x++)
+		{
+			for(int y = 0; y < 4; y++)
+			{
+				for(int z = 0; z < 4; z++)
+				{
+					if(Field[x, y, z].HasValue == false)
+					{
+						Field[x, y, z] = Random.Range(0, 4);
+					}
+				}
+			}
+		}
+
+		Print();
 	}
 }
