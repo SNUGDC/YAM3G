@@ -18,16 +18,16 @@ public class CircleController : MonoBehaviour
 		switch((int)transform.position.z)
 		{
 			case 9:
-				transform.localScale = new Vector3(1, 1, 1);
+				transform.localScale = new Vector3(1, 1, 1) * 1.2f;
 				break;
 			case 3:
-				transform.localScale = new Vector3(0.75f, 0.75f, 1);
+				transform.localScale = new Vector3(0.75f, 0.75f, 1) * 1.2f;
 				break;
 			case -3:
-				transform.localScale = new Vector3(0.5f, 0.5f, 1);
+				transform.localScale = new Vector3(0.5f, 0.5f, 1) * 1.2f;
 				break;
 			case -9:
-				transform.localScale = new Vector3(0.25f, 0.25f, 1);
+				transform.localScale = new Vector3(0.25f, 0.25f, 1) * 1.2f;
 				break;
 		}
 	}
