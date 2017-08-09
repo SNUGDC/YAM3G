@@ -198,9 +198,10 @@ public class BoardController : MonoBehaviour
     {
         Debug.Log("AnimationList.Count : " + animationList.Count);
         RefreshScore();
-        for (int i = 0; i < animationList.Count; i++)
+        foreach (var anim in animationList)
         {
-            animation.Insert(animation.Duration(), animationList[i]);
+            animation.Append(anim);
+            //animation.Insert(animation.Duration(), animationList[i]);
         }
         Debug.Log("Animation Duration : " + animation.Duration());
         animation.Play();
@@ -270,7 +271,10 @@ public class BoardController : MonoBehaviour
     }
     Tween DOMovePositionOfCircle(int x, int y)
     {
-        return board[x, y].circleObject.transform.DOMove(new Vector3(grid / 2 + (x - mid) * grid, grid / 2 + (y - mid) * grid), aniTime);
+        return board[x, y].circleObject.transform.DOMove(new Vector3(grid / 2 + (x - mid) * grid, grid / 2 + (y - mid) * grid), aniTime).OnPlay(() =>
+        {
+            Debug.Log("DOMovePos : " + Time.time);
+        });
     }
     void TransformPositionOfBarrier(Barrier[,] b, int x, int y)
     {
@@ -301,8 +305,14 @@ public class BoardController : MonoBehaviour
 
         if (animate)
         {
-            seq.Join(DOMovePositionOfCircle(xi, yi));
-            seq.Join(DOMovePositionOfCircle(xf, yf));
+            seq.Join(DOMovePositionOfCircle(xi, yi)).OnPlay(() =>
+            {
+                Debug.Log("MoveCircle seqJoin : " + Time.time);
+            });
+            seq.Join(DOMovePositionOfCircle(xf, yf)).OnPlay(() =>
+            {
+                Debug.Log("MoveCircle seqJoin : " + Time.time);
+            });
         }
         else
         {
@@ -338,8 +348,14 @@ public class BoardController : MonoBehaviour
             Sequence fallingSeq = DOTween.Sequence();
             Sequence creatingSeq = DOTween.Sequence();
             loop = RefillOnce(fallingSeq, creatingSeq, animate);
-            fallAnimation.Insert(fallAnimation.Duration(), fallingSeq);
-            createAnimation.Insert(createAnimation.Duration(), creatingSeq);
+            fallAnimation.Insert(fallAnimation.Duration(), fallingSeq).OnPlay(() =>
+            {
+                Debug.Log("FallAnim Append : " + Time.time);
+            });
+            createAnimation.Insert(createAnimation.Duration(), creatingSeq).OnPlay(() =>
+            {
+                Debug.Log("CreateAnim Append : " + Time.time);
+            });
         }
         animationList.Add(fallAnimation);
         //animation.Insert(animation.Duration(), fallAnimation);
@@ -417,7 +433,10 @@ public class BoardController : MonoBehaviour
                 { board[i, j] = tempBoard[j, size - 1 - i]; }
                 if (animate)
                 {
-                    rotateAnimation.Insert(0, DOMovePositionOfCircle(i, j));
+                    rotateAnimation.Insert(0, DOMovePositionOfCircle(i, j)).OnPlay(() =>
+                    {
+                        Debug.Log("RotateAnim CircleJoin : " + Time.time);
+                    });
                 }
                 else
                 {
@@ -432,8 +451,14 @@ public class BoardController : MonoBehaviour
                     { barrierH[i, j] = tempBarrierV[j, size - 1 - i]; }
                     if (animate)
                     {
-                        rotateAnimation.Insert(0, DOMovePositionOfBarrierH(i, j));
-                        rotateAnimation.Insert(0, DORotateBarrierH(i, j, isClockwise));
+                        rotateAnimation.Insert(0, DOMovePositionOfBarrierH(i, j)).OnPlay(() =>
+                        {
+                            Debug.Log("RotateAnim BarrierHJoin : " + Time.time);
+                        });
+                        rotateAnimation.Insert(0, DORotateBarrierH(i, j, isClockwise)).OnPlay(() =>
+                        {
+                            Debug.Log("RotateAnim BarrierHJoin : " + Time.time);
+                        });
                     }
                     else
                     {
@@ -451,8 +476,14 @@ public class BoardController : MonoBehaviour
                     { barrierV[i, j] = tempBarrierH[j, size - 2 - i]; }
                     if (animate)
                     {
-                        rotateAnimation.Insert(0, DOMovePositionOfBarrierV(i, j));
-                        rotateAnimation.Insert(0, DORotateBarrierV(i, j, isClockwise));
+                        rotateAnimation.Insert(0, DOMovePositionOfBarrierV(i, j)).OnPlay(() =>
+                        {
+                            Debug.Log("RotateAnim BarrierVJoin : " + Time.time);
+                        });
+                        rotateAnimation.Insert(0, DORotateBarrierV(i, j, isClockwise)).OnPlay(() =>
+                        {
+                            Debug.Log("RotateAnim BarrierVJoin : " + Time.time);
+                        });
                     }
                     else
                     {
@@ -475,7 +506,10 @@ public class BoardController : MonoBehaviour
         {
             Sequence movingSeq = DOTween.Sequence();
             loop = MoveBubble(movingSeq, animate) || MoveStone(movingSeq, animate);
-            moveBnSAnimation.Insert(moveBnSAnimation.Duration(), movingSeq);
+            moveBnSAnimation.Insert(moveBnSAnimation.Duration(), movingSeq).OnPlay(() =>
+            {
+                Debug.Log("MoveBnS PlayTime : " + Time.time);
+            });
         }
         animationList.Add(moveBnSAnimation);
         //animation.Insert(animation.Duration(), moveBnSAnimation);
@@ -532,13 +566,19 @@ public class BoardController : MonoBehaviour
     {
         int clock = -1;
         if (!isClockwise) { clock = 1; }
-        return barrierH[x, y].barrierObject.transform.DORotate(new Vector3(0, 0, 0), aniTime);
+        return barrierH[x, y].barrierObject.transform.DORotate(new Vector3(0, 0, 0), aniTime).OnPlay(() =>
+        {
+            Debug.Log("DORotate BarrierH : " + Time.time);
+        });
     }
     Tween DORotateBarrierV(int x, int y, bool isClockwise)
     {
         int clock = -1;
         if (!isClockwise) { clock = 1; }
-        return barrierV[x, y].barrierObject.transform.DORotate(new Vector3(0, 0, 90), aniTime);
+        return barrierV[x, y].barrierObject.transform.DORotate(new Vector3(0, 0, 90), aniTime).OnPlay(() =>
+        {
+            Debug.Log("DORotate BarrierV : " + Time.time);
+        });
     }
 
     bool Check(bool animate)
@@ -576,7 +616,10 @@ public class BoardController : MonoBehaviour
         RefreshScore();
         if (animate)
         {
-            seq.Join(ct.DOScale(new Vector3(0, 0, 0), aniTime));
+            seq.Join(ct.DOScale(new Vector3(0, 0, 0), aniTime)).OnPlay(() =>
+            {
+                Debug.Log("DeleteAnim Join : " + Time.time);
+            });
         }
         else
         {
@@ -788,7 +831,10 @@ public class BoardController : MonoBehaviour
         }
         clickedObject = null;
         //animationList.Add(swapAnimation);
-        animation.Insert(animation.Duration(), swapAnimation);
+        animation.Insert(animation.Duration(), swapAnimation).OnPlay(() =>
+        {
+            Debug.Log("SwapAnim Append : " + Time.time);
+        });
         AutoProgress(autoAnimation);
         /*
         if (autoMode)
