@@ -184,14 +184,16 @@ public class BoardController : MonoBehaviour
     }
     void NewCircle(int x, int y, Sequence seq, bool animate)
     {
+        Sequence tempSeq = DOTween.Sequence();
         board[x, y].value = NewNumber();
         board[x, y].att = NewAttribution();
         ColoringCircle(board[x, y], !animate);
         if (animate)
         {
             Transform ct = board[x, y].circleObject.transform;
-            seq.Join(ct.DOScale(new Vector3(0, 0, 0), 0));
-            seq.Join(ct.DOScale(new Vector3(scale, scale, 1), aniTime));
+            tempSeq.Join(ct.DOScale(new Vector3(0, 0, 0), 0));
+            tempSeq.Join(ct.DOScale(new Vector3(scale, scale, 1), aniTime));
+            seq.Append(tempSeq);
         }
     }
     void Print(bool animate)
@@ -200,7 +202,9 @@ public class BoardController : MonoBehaviour
         RefreshScore();
         foreach (var anim in animationList)
         {
-            animation.Append(anim);
+            animation.Append(anim)
+                .OnPlay(() => { Debug.Log("AppendingAnimation : " + Time.time); })
+                .OnStepComplete(() => { Debug.Log("StepCompleteAnimation : " + Time.time); });
             //animation.Insert(animation.Duration(), animationList[i]);
         }
         Debug.Log("Animation Duration : " + animation.Duration());
@@ -305,14 +309,16 @@ public class BoardController : MonoBehaviour
 
         if (animate)
         {
-            seq.Join(DOMovePositionOfCircle(xi, yi)).OnPlay(() =>
+            Sequence tempSeq = DOTween.Sequence();
+            tempSeq.Append(DOMovePositionOfCircle(xi, yi)).OnPlay(() =>
+            {
+                Debug.Log("MoveCircle seqAppend : " + Time.time);
+            });
+            tempSeq.Join(DOMovePositionOfCircle(xf, yf)).OnPlay(() =>
             {
                 Debug.Log("MoveCircle seqJoin : " + Time.time);
             });
-            seq.Join(DOMovePositionOfCircle(xf, yf)).OnPlay(() =>
-            {
-                Debug.Log("MoveCircle seqJoin : " + Time.time);
-            });
+            seq.Append(tempSeq);
         }
         else
         {
@@ -348,11 +354,11 @@ public class BoardController : MonoBehaviour
             Sequence fallingSeq = DOTween.Sequence();
             Sequence creatingSeq = DOTween.Sequence();
             loop = RefillOnce(fallingSeq, creatingSeq, animate);
-            fallAnimation.Insert(fallAnimation.Duration(), fallingSeq).OnPlay(() =>
+            fallAnimation.Append(fallingSeq).OnPlay(() =>
             {
                 Debug.Log("FallAnim Append : " + Time.time);
             });
-            createAnimation.Insert(createAnimation.Duration(), creatingSeq).OnPlay(() =>
+            createAnimation.Append(creatingSeq).OnPlay(() =>
             {
                 Debug.Log("CreateAnim Append : " + Time.time);
             });
@@ -508,7 +514,7 @@ public class BoardController : MonoBehaviour
             loop = MoveBubble(movingSeq, animate) || MoveStone(movingSeq, animate);
             moveBnSAnimation.Insert(moveBnSAnimation.Duration(), movingSeq).OnPlay(() =>
             {
-                Debug.Log("MoveBnS PlayTime : " + Time.time);
+                Debug.Log("MoveBnS Append : " + Time.time);
             });
         }
         animationList.Add(moveBnSAnimation);
@@ -584,6 +590,7 @@ public class BoardController : MonoBehaviour
     bool Check(bool animate)
     {
         Sequence deleteAnimation = DOTween.Sequence();
+        deleteAnimation.SetDelay(aniTime);
         checkedList.Clear();
         bool done = true;
         for (int j = 0; j < size; j++)
@@ -611,15 +618,17 @@ public class BoardController : MonoBehaviour
     }
     void DeleteCircle(int x, int y, Sequence seq, bool animate)
     {
+        Sequence tempSeq = DOTween.Sequence();
         board[x, y].value = 0;
         Transform ct = board[x, y].circleObject.transform;
         RefreshScore();
         if (animate)
         {
-            seq.Join(ct.DOScale(new Vector3(0, 0, 0), aniTime)).OnPlay(() =>
+            tempSeq.Join(ct.DOScale(new Vector3(0, 0, 0), aniTime)).OnPlay(() =>
             {
                 Debug.Log("DeleteAnim Join : " + Time.time);
             });
+            seq.Append(tempSeq);
         }
         else
         {
