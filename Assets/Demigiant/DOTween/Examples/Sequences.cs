@@ -27,12 +27,12 @@ public class Sequences : MonoBehaviour
 		// Add a 1 second rotation tween, using Join so it will start when the previous one starts
 		sequenceA.Join(targetA.DORotate(new Vector3(0, 135, 0), 1));
 		// Add a 1 second scale Y tween, using Append so it will start after the previously added tweens end
-		sequenceA.Append(targetA.DOScaleY(0.2f, 1));
+		sequenceA.Insert(sequenceA.Duration(false), targetA.DOScaleY(0.2f, 1));
 		// Add an X axis relative move tween that will start from the beginning of the Sequence
 		// and last for the whole Sequence duration
 		sequenceA.Insert(0, targetA.DOMoveX(4, sequenceA.Duration()).SetRelative());
-
-        sequenceB.Append(targetA.DOMoveY(2, 1).SetRelative());
+        
+        sequenceB.Insert(sequenceB.Duration(), targetA.DOMoveY(2, 1).SetRelative());
         // Add a 1 second rotation tween, using Join so it will start when the previous one starts
         sequenceB.Join(targetA.DORotate(new Vector3(0, 135, 0), 1));
         // Add a 1 second scale Y tween, using Append so it will start after the previously added tweens end

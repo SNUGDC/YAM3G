@@ -200,8 +200,9 @@ public class BoardController : MonoBehaviour
         RefreshScore();
         for (int i = 0; i < animationList.Count; i++)
         {
-            animation.Append(animationList[i]);
+            animation.Insert(animation.Duration(), animationList[i]);
         }
+        Debug.Log("Animation Duration : " + animation.Duration());
         animation.Play();
         animationList = new List<Sequence>();
     }
@@ -337,13 +338,13 @@ public class BoardController : MonoBehaviour
             Sequence fallingSeq = DOTween.Sequence();
             Sequence creatingSeq = DOTween.Sequence();
             loop = RefillOnce(fallingSeq, creatingSeq, animate);
-            fallAnimation.Append(fallingSeq);
-            createAnimation.Append(creatingSeq);
+            fallAnimation.Insert(fallAnimation.Duration(), fallingSeq);
+            createAnimation.Insert(createAnimation.Duration(), creatingSeq);
         }
-        //animationList.Add(fallAnimation);
-        animation.Insert(animation.Duration(), fallAnimation);
-        //animationList.Add(createAnimation);
-        animation.Insert(animation.Duration(), createAnimation);
+        animationList.Add(fallAnimation);
+        //animation.Insert(animation.Duration(), fallAnimation);
+        animationList.Add(createAnimation);
+        //animation.Insert(animation.Duration(), createAnimation);
     }
     bool RefillOnce(Sequence moveSeq, Sequence newSeq, bool animate)
     {
@@ -416,7 +417,7 @@ public class BoardController : MonoBehaviour
                 { board[i, j] = tempBoard[j, size - 1 - i]; }
                 if (animate)
                 {
-                    rotateAnimation.Join(DOMovePositionOfCircle(i, j));
+                    rotateAnimation.Insert(0, DOMovePositionOfCircle(i, j));
                 }
                 else
                 {
@@ -431,8 +432,8 @@ public class BoardController : MonoBehaviour
                     { barrierH[i, j] = tempBarrierV[j, size - 1 - i]; }
                     if (animate)
                     {
-                        rotateAnimation.Join(DOMovePositionOfBarrierH(i, j));
-                        rotateAnimation.Join(DORotateBarrierH(i, j, isClockwise));
+                        rotateAnimation.Insert(0, DOMovePositionOfBarrierH(i, j));
+                        rotateAnimation.Insert(0, DORotateBarrierH(i, j, isClockwise));
                     }
                     else
                     {
@@ -450,8 +451,8 @@ public class BoardController : MonoBehaviour
                     { barrierV[i, j] = tempBarrierH[j, size - 2 - i]; }
                     if (animate)
                     {
-                        rotateAnimation.Join(DOMovePositionOfBarrierV(i, j));
-                        rotateAnimation.Join(DORotateBarrierV(i, j, isClockwise));
+                        rotateAnimation.Insert(0, DOMovePositionOfBarrierV(i, j));
+                        rotateAnimation.Insert(0, DORotateBarrierV(i, j, isClockwise));
                     }
                     else
                     {
@@ -461,8 +462,8 @@ public class BoardController : MonoBehaviour
                 }
             }
         }
-        //animationList.Add(rotateAnimation);
-        animation.Insert(animation.Duration(), rotateAnimation);
+        animationList.Add(rotateAnimation);
+        //animation.Insert(animation.Duration(), rotateAnimation);
         MoveBubbleAndStone(autoAnimation);
         AutoProgress(autoAnimation);
     }
@@ -474,10 +475,10 @@ public class BoardController : MonoBehaviour
         {
             Sequence movingSeq = DOTween.Sequence();
             loop = MoveBubble(movingSeq, animate) || MoveStone(movingSeq, animate);
-            moveBnSAnimation.Append(movingSeq);
+            moveBnSAnimation.Insert(moveBnSAnimation.Duration(), movingSeq);
         }
-        //animationList.Add(moveBnSAnimation);
-        animation.Insert(animation.Duration(), moveBnSAnimation);
+        animationList.Add(moveBnSAnimation);
+        //animation.Insert(animation.Duration(), moveBnSAnimation);
     }
     bool MoveBubble(Sequence seq, bool animate)
     {
@@ -564,8 +565,8 @@ public class BoardController : MonoBehaviour
                 checkBoard[i, j] = false;
             }
         }
-        //animationList.Add(deleteAnimation);
-        animation.Insert(animation.Duration(), deleteAnimation);
+        animationList.Add(deleteAnimation);
+        //animation.Insert(animation.Duration(), deleteAnimation);
         return done;
     }
     void DeleteCircle(int x, int y, Sequence seq, bool animate)
