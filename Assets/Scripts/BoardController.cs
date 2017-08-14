@@ -4,7 +4,6 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
-using DG.Tweening;
 
 public class BoardController : MonoBehaviour
 {
@@ -24,11 +23,8 @@ public class BoardController : MonoBehaviour
     GameObject clickedObject;
     public Text scoreRenderer;
     bool autoMode;
-    bool autoAnimation;
     bool canInput;
-    Sequence animation;
-    List<Sequence> animationList;
-
+    
     void Awake()
     {
         CreateBoard();
@@ -49,14 +45,11 @@ public class BoardController : MonoBehaviour
     {
         clickedObject = null;
         autoMode = true;
-        autoAnimation = false;
         canInput = true;
-        animationList = new List<Sequence>();
         mid = size / 2f;
         grid = 2 * edgeOfBoard / size;
         scale = (8f / size) * edgeOfBoard / 2f;
-        animation = DOTween.Sequence();
-
+        
         ClearBoard();
         CreateBoard();
         ImportBarrier();
@@ -68,9 +61,8 @@ public class BoardController : MonoBehaviour
                 NewCircle(i, j);
             }
         }
-        AutoProgress(false);
+        AutoProgress();
         score = 0;
-        Print(false);
     }
     void ClearBoard()
     {
@@ -124,21 +116,6 @@ public class BoardController : MonoBehaviour
         TransformPositionOfCircle(x, y);
         return circle;
     }
-    void Print(bool animate)
-    {
-        Debug.Log("AnimationList.Count : " + animationList.Count);
-        RefreshScore();
-        foreach (var anim in animationList)
-        {
-            animation.Append(anim)
-                .OnPlay(() => { Debug.Log("AppendingAnimation : " + Time.time); })
-                .OnStepComplete(() => { Debug.Log("StepCompleteAnimation : " + Time.time); });
-            //animation.Insert(animation.Duration(), animationList[i]);
-        }
-        Debug.Log("Animation Duration : " + animation.Duration());
-        animation.Play();
-        animationList = new List<Sequence>();
-    }
     
     void DirectingBarrier(Barrier[,] b, int x, int y)
     {
@@ -154,8 +131,7 @@ public class BoardController : MonoBehaviour
             return;
         }
         if (b == barrierH) { sprite = 0; }
-        else if (b == barrierV) { sprite = 1; barrierObject.transform.DORotate(new Vector3(0, 0, 90),0); }
-        sprite = 0;
+        else if (b == barrierV) { sprite = 1; }
         spriteR.sprite = barrierSprites[sprite];
     }
 
@@ -163,13 +139,6 @@ public class BoardController : MonoBehaviour
     {
         if (board[x, y] != null)
             board[x, y].circleObject.transform.position = new Vector3(grid / 2 + (x - mid) * grid, grid / 2 + (y - mid) * grid);
-    }
-    Tween DOMovePositionOfCircle(int x, int y)
-    {
-        return board[x, y].circleObject.transform.DOMove(new Vector3(grid / 2 + (x - mid) * grid, grid / 2 + (y - mid) * grid), aniTime).OnPlay(() =>
-        {
-            Debug.Log("DOMovePos : " + Time.time);
-        });
     }
     void TransformPositionOfBarrier(Barrier[,] b, int x, int y)
     {
@@ -184,42 +153,17 @@ public class BoardController : MonoBehaviour
             return;
         }
     }
-    Tween DOMovePositionOfBarrierH(int x, int y)
-    {
-        return barrierH[x, y].barrierObject.transform.DOMove(new Vector3(grid / 2 + (x - mid) * grid, grid + (y - mid) * grid), aniTime);
-    }
-    Tween DOMovePositionOfBarrierV(int x, int y)
-    {
-        return barrierV[x, y].barrierObject.transform.DOMove(new Vector3(grid + (x - mid) * grid, grid / 2 + (y - mid) * grid), aniTime);
-    }
-    void MoveCircle(int xi, int yi, int xf, int yf, Sequence seq, bool animate)
+    void MoveCircle(int xi, int yi, int xf, int yf)
     {
         Circle tempCircle = board[xf, yf];
         board[xf, yf] = board[xi, yi];
         board[xi, yi] = tempCircle;
-
-        if (animate)
-        {
-            Sequence tempSeq = DOTween.Sequence();
-            tempSeq.Append(DOMovePositionOfCircle(xi, yi)).OnPlay(() =>
-            {
-                Debug.Log("MoveCircle seqAppend : " + Time.time);
-            });
-            tempSeq.Join(DOMovePositionOfCircle(xf, yf)).OnPlay(() =>
-            {
-                Debug.Log("MoveCircle seqJoin : " + Time.time);
-            });
-            seq.Append(tempSeq);
-        }
-        else
-        {
-            TransformPositionOfCircle(xi, yi);
-            TransformPositionOfCircle(xf, yf);
-        }
+        TransformPositionOfCircle(xi, yi);
+        TransformPositionOfCircle(xf, yf);
     }
-    void MoveCircle(IntVector2 vectori, IntVector2 vectorf, Sequence sequence, bool animate)
+    void MoveCircle(IntVector2 vectori, IntVector2 vectorf)
     {
-        MoveCircle(vectori.x, vectori.y, vectorf.x, vectorf.y, sequence, animate);
+        MoveCircle(vectori.x, vectori.y, vectorf.x, vectorf.y);
     }
     void MoveBarrier(Barrier[,] bi, int xi, int yi, Barrier[,] bf, int xf, int yf)
     {
@@ -235,31 +179,15 @@ public class BoardController : MonoBehaviour
         MoveBarrier(bi, vectori.x, vectori.y, bf, vectorf.x, vectorf.y);
     }
 
-    void Refill(bool animate)
+    void Refill()
     {
-        Sequence fallAnimation = DOTween.Sequence();
-        Sequence createAnimation = DOTween.Sequence();
         bool loop = true;
         while (loop)
         {
-            Sequence fallingSeq = DOTween.Sequence();
-            Sequence creatingSeq = DOTween.Sequence();
-            loop = RefillOnce(fallingSeq, creatingSeq, animate);
-            fallAnimation.Append(fallingSeq).OnPlay(() =>
-            {
-                Debug.Log("FallAnim Append : " + Time.time);
-            });
-            createAnimation.Append(creatingSeq).OnPlay(() =>
-            {
-                Debug.Log("CreateAnim Append : " + Time.time);
-            });
+            loop = RefillOnce();
         }
-        animationList.Add(fallAnimation);
-        //animation.Insert(animation.Duration(), fallAnimation);
-        animationList.Add(createAnimation);
-        //animation.Insert(animation.Duration(), createAnimation);
     }
-    bool RefillOnce(Sequence moveSeq, Sequence newSeq, bool animate)
+    bool RefillOnce()
     {
         bool done = false;
         for (int j = 0; j < size; j++)
@@ -270,7 +198,7 @@ public class BoardController : MonoBehaviour
                 {
                     if (j != size - 1)
                     {
-                        MoveCircle(i, j, i, j + 1, moveSeq, animate);
+                        MoveCircle(i, j, i, j + 1);
                         done = true;
                     }
                     else
@@ -299,9 +227,8 @@ public class BoardController : MonoBehaviour
         return IsInsideOfRange(vector.x, vector.y);
     }
 
-    void RotateBoard(bool isClockwise, bool animate)
+    void RotateBoard(bool isClockwise)
     {
-        Sequence rotateAnimation = DOTween.Sequence();
         Circle[,] tempBoard = new Circle[size, size];
         Barrier[,] tempBarrierH = new Barrier[size, size - 1];
         Barrier[,] tempBarrierV = new Barrier[size - 1, size];
@@ -328,17 +255,8 @@ public class BoardController : MonoBehaviour
                 { board[i, j] = tempBoard[size - 1 - j, i]; }
                 else
                 { board[i, j] = tempBoard[j, size - 1 - i]; }
-                if (animate)
-                {
-                    rotateAnimation.Insert(0, DOMovePositionOfCircle(i, j)).OnPlay(() =>
-                    {
-                        Debug.Log("RotateAnim CircleJoin : " + Time.time);
-                    });
-                }
-                else
-                {
-                    TransformPositionOfCircle(i, j);
-                }
+
+                TransformPositionOfCircle(i, j);
 
                 if (j != size - 1)
                 {
@@ -346,22 +264,9 @@ public class BoardController : MonoBehaviour
                     { barrierH[i, j] = tempBarrierV[size - 2 - j, i]; }
                     else
                     { barrierH[i, j] = tempBarrierV[j, size - 1 - i]; }
-                    if (animate)
-                    {
-                        rotateAnimation.Insert(0, DOMovePositionOfBarrierH(i, j)).OnPlay(() =>
-                        {
-                            Debug.Log("RotateAnim BarrierHJoin : " + Time.time);
-                        });
-                        rotateAnimation.Insert(0, DORotateBarrierH(i, j, isClockwise)).OnPlay(() =>
-                        {
-                            Debug.Log("RotateAnim BarrierHJoin : " + Time.time);
-                        });
-                    }
-                    else
-                    {
-                        TransformPositionOfBarrier(barrierH, i, j);
-                        DirectingBarrier(barrierH, i, j);
-                    }
+
+                    TransformPositionOfBarrier(barrierH, i, j);
+                    DirectingBarrier(barrierH, i, j);
                 }
 
                 if (i != size - 1)
@@ -371,47 +276,25 @@ public class BoardController : MonoBehaviour
                     { barrierV[i, j] = tempBarrierH[size - 1 - j, i]; }
                     else
                     { barrierV[i, j] = tempBarrierH[j, size - 2 - i]; }
-                    if (animate)
-                    {
-                        rotateAnimation.Insert(0, DOMovePositionOfBarrierV(i, j)).OnPlay(() =>
-                        {
-                            Debug.Log("RotateAnim BarrierVJoin : " + Time.time);
-                        });
-                        rotateAnimation.Insert(0, DORotateBarrierV(i, j, isClockwise)).OnPlay(() =>
-                        {
-                            Debug.Log("RotateAnim BarrierVJoin : " + Time.time);
-                        });
-                    }
-                    else
-                    {
-                        TransformPositionOfBarrier(barrierV, i, j);
-                        DirectingBarrier(barrierV, i, j);
-                    }
+
+                    TransformPositionOfBarrier(barrierV, i, j);
+                    DirectingBarrier(barrierV, i, j);
                 }
             }
         }
-        animationList.Add(rotateAnimation);
-        //animation.Insert(animation.Duration(), rotateAnimation);
-        MoveBubbleAndStone(autoAnimation);
-        AutoProgress(autoAnimation);
+
+        MoveBubbleAndStone();
+        AutoProgress();
     }
-    void MoveBubbleAndStone(bool animate)
+    void MoveBubbleAndStone()
     {
-        Sequence moveBnSAnimation = DOTween.Sequence();
         bool loop = true;
         while (loop)
         {
-            Sequence movingSeq = DOTween.Sequence();
-            loop = MoveBubble(movingSeq, animate) || MoveStone(movingSeq, animate);
-            moveBnSAnimation.Insert(moveBnSAnimation.Duration(), movingSeq).OnPlay(() =>
-            {
-                Debug.Log("MoveBnS Append : " + Time.time);
-            });
+            loop = MoveBubble() || MoveStone();
         }
-        animationList.Add(moveBnSAnimation);
-        //animation.Insert(animation.Duration(), moveBnSAnimation);
     }
-    bool MoveBubble(Sequence seq, bool animate)
+    bool MoveBubble()
     {
         bool done = false;
         for (int j = size - 1; j > -1; j--)
@@ -428,14 +311,14 @@ public class BoardController : MonoBehaviour
                     IsInsideOfRange(i, j + 1) &&
                     board[i, j + 1].att != Attribution.Bubble)
                 {
-                    MoveCircle(i, j, i, j + 1, seq, animate);
+                    MoveCircle(i, j, i, j + 1);
                     done = true;
                 }
             }
         }
         return done;
     }
-    bool MoveStone(Sequence seq, bool animate)
+    bool MoveStone()
     {
         bool done = false;
         for (int j = 0; j < size; j++)
@@ -452,30 +335,12 @@ public class BoardController : MonoBehaviour
                     IsInsideOfRange(i, j - 1) &&
                     board[i, j - 1].att != Attribution.Stone)
                 {
-                    MoveCircle(i, j, i, j - 1, seq, animate);
+                    MoveCircle(i, j, i, j - 1);
                     done = true;
                 }
             }
         }
         return done;
-    }
-    Tween DORotateBarrierH(int x, int y, bool isClockwise)
-    {
-        int clock = -1;
-        if (!isClockwise) { clock = 1; }
-        return barrierH[x, y].barrierObject.transform.DORotate(new Vector3(0, 0, 0), aniTime).OnPlay(() =>
-        {
-            Debug.Log("DORotate BarrierH : " + Time.time);
-        });
-    }
-    Tween DORotateBarrierV(int x, int y, bool isClockwise)
-    {
-        int clock = -1;
-        if (!isClockwise) { clock = 1; }
-        return barrierV[x, y].barrierObject.transform.DORotate(new Vector3(0, 0, 90), aniTime).OnPlay(() =>
-        {
-            Debug.Log("DORotate BarrierV : " + Time.time);
-        });
     }
 
     public void SetClickedObject(GameObject clicked)
@@ -528,20 +393,14 @@ public class BoardController : MonoBehaviour
             Debug.Log("Auto Mode : " + autoMode);
             return;
         }
-        if (Input.GetKeyDown(KeyCode.X))
-        {
-            autoAnimation = !autoAnimation;
-            Debug.Log("Auto Animation : " + autoAnimation);
-            return;
-        }
         if (Input.GetKeyDown(KeyCode.E))
         {
-            RotateBoard(true, autoAnimation);
+            RotateBoard(true);
             return;
         }
         if (Input.GetKeyDown(KeyCode.Q))
         {
-            RotateBoard(false, autoAnimation);
+            RotateBoard(false);
             return;
         }
 
@@ -549,29 +408,27 @@ public class BoardController : MonoBehaviour
         {
             if (Input.GetKeyDown(KeyCode.Space) || Input.GetKeyDown(KeyCode.F))
             {
-                Refill(autoAnimation);
+                Refill();
                 return;
             }
             if (Input.GetKeyDown(KeyCode.G))
             {
-                RefillOnce(animation, animation, autoAnimation);
-                Print(autoAnimation);
+                RefillOnce();
                 return;
             }
             if (Input.GetKeyDown(KeyCode.R))
             {
-                var checker = new Checker(size, board, autoAnimation, aniTime) {
+                var checker = new Checker(size, board) {
                     RefreshScore = RefreshScore,
                     AddScore = AddScore,
                     NewCircle = NewCircle
                 };
                 checker.Check();
-                animationList.Add(checker.DeleteAnimation);
                 return;
             }
             if (Input.GetKeyDown(KeyCode.T))
             {
-                MoveBubbleAndStone(autoAnimation);
+                MoveBubbleAndStone();
                 return;
             }
         }
@@ -609,44 +466,30 @@ public class BoardController : MonoBehaviour
     }
     void SwapObjects(int deltaX, int deltaY)
     {
-        Sequence swapAnimation = DOTween.Sequence();
         IntVector2 posI = PositionOfCircleObject(clickedObject);
         IntVector2 posF = new IntVector2(posI.x + deltaX, posI.y + deltaY);
         if (IsInsideOfRange(posF))
         {
-            MoveCircle(posI, posF, swapAnimation, autoAnimation);
+            MoveCircle(posI, posF);
         }
         clickedObject = null;
-        //animationList.Add(swapAnimation);
-        animation.Insert(animation.Duration(), swapAnimation).OnPlay(() =>
-        {
-            Debug.Log("SwapAnim Append : " + Time.time);
-        });
-        AutoProgress(autoAnimation);
-        /*
-        if (autoMode)
-        {
-            AutoProgress(autoAnimation);
-        }
-        */
+        AutoProgress();
     }
-    void AutoProgress(bool animate)
+    void AutoProgress()
     {
         bool check;
         while (true)
         {
-            var checker = new Checker(size, board, animate, aniTime) {
+            var checker = new Checker(size, board) {
                 RefreshScore = RefreshScore,
                 AddScore = AddScore,
                 NewCircle = NewCircle
             };
             check = checker.Check();
-            animationList.Add(checker.DeleteAnimation);
 
-            Refill(animate);
-            MoveBubbleAndStone(animate);
+            Refill();
+            MoveBubbleAndStone();
             if (check) { break; }
         }
-        Print(animate);
     }
 }

@@ -1,34 +1,24 @@
 using UnityEngine;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using DG.Tweening;
 
 public class Checker {
     private int size;
     private Circle[,] board;
-    private bool animate;
-    private float aniTime;
     public Func<int, int, Circle> NewCircle { get; set; }
     public Action RefreshScore { get; set; }
     public Action<int> AddScore { get; set; }
 
     private bool[,] checkBoard;
-    public Checker(int size, Circle[,] board, bool animate, float aniTime) {
+    public Checker(int size, Circle[,] board) {
         this.size = size;
         this.board = board;
-        this.animate = animate;
-        this.aniTime = aniTime;
         
         this.checkBoard = new bool[size, size];
     }
 
-    public Sequence DeleteAnimation {get; private set;}
-
     public bool Check()
     {
-        DeleteAnimation = DOTween.Sequence();
-        
         var checkedList = new List<IntVector2>();
         var done = true;
         for (int j = 0; j < size; j++)
@@ -59,24 +49,10 @@ public class Checker {
         board[x, y] = null;
         Transform ct = circle.circleObject.transform;
         RefreshScore();
-        if (animate)
-        {
-            var seq = DOTween.Sequence()
-                .Join(ct.DOScale(new Vector3(0, 0, 0), aniTime))
-                .OnPlay(() =>
-                {
-                    Debug.Log("DeleteAnim Join : " + Time.time);
-                })
-                .OnComplete(() => {
-                    MonoBehaviour.Destroy(circle.circleObject);
-                });
-            DeleteAnimation.Append(seq);
-        }
-        else
-        {
-            ct.localScale = new Vector3(0, 0, 0);
-            MonoBehaviour.Destroy(circle.circleObject);
-        }
+
+        ct.localScale = new Vector3(0, 0, 0);
+        MonoBehaviour.Destroy(circle.circleObject);
+
     }
 
     private void CheckOnce(List<IntVector2> checkedList, int x, int y, int recursiveNum)
