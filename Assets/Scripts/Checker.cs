@@ -1,6 +1,8 @@
 using UnityEngine;
 using System;
+using System.Collections;
 using System.Collections.Generic;
+using DG.Tweening;
 
 public class Checker {
     private int size;
@@ -17,10 +19,12 @@ public class Checker {
         this.checkBoard = new bool[size, size];
     }
 
-    public bool Check()
+    public bool Done { get; private set; }
+
+    public IEnumerator DoCheck()
     {
         var checkedList = new List<IntVector2>();
-        var done = true;
+        Done = true;
         for (int j = 0; j < size; j++)
         {
             for (int i = 0; i < size; i++)
@@ -28,31 +32,29 @@ public class Checker {
                 CheckOnce(checkedList, i, j, 0);
             }
         }
+        
         for (int j = 0; j < size; j++)
         {
             for (int i = 0; i < size; i++)
             {
                 if (checkBoard[i, j])
                 {
-                    DeleteCircle(i, j);
-                    done = false;
+                    yield return DeleteCircle(i, j);
+                    Done = false;
                 }
             }
         }
-        
-        return done;
     }
     
-    private void DeleteCircle(int x, int y)
+    private IEnumerator DeleteCircle(int x, int y)
     {
         var circle = board[x, y];
         board[x, y] = null;
         Transform ct = circle.circleObject.transform;
         RefreshScore();
 
-        ct.localScale = new Vector3(0, 0, 0);
+        yield return ct.DOScale(Vector3.zero, 1).WaitForCompletion();
         MonoBehaviour.Destroy(circle.circleObject);
-
     }
 
     private void CheckOnce(List<IntVector2> checkedList, int x, int y, int recursiveNum)

@@ -61,7 +61,8 @@ public class BoardController : MonoBehaviour
                 NewCircle(i, j);
             }
         }
-        AutoProgress();
+        
+        StartCoroutine(AutoProgress());
         score = 0;
     }
     void ClearBoard()
@@ -418,12 +419,12 @@ public class BoardController : MonoBehaviour
             }
             if (Input.GetKeyDown(KeyCode.R))
             {
-                var checker = new Checker(size, board) {
-                    RefreshScore = RefreshScore,
-                    AddScore = AddScore,
-                    NewCircle = NewCircle
-                };
-                checker.Check();
+                // var checker = new Checker(size, board) {
+                //     RefreshScore = RefreshScore,
+                //     AddScore = AddScore,
+                //     NewCircle = NewCircle
+                // };
+                // checker.Check();
                 return;
             }
             if (Input.GetKeyDown(KeyCode.T))
@@ -475,7 +476,8 @@ public class BoardController : MonoBehaviour
         clickedObject = null;
         AutoProgress();
     }
-    void AutoProgress()
+
+    IEnumerator AutoProgress()
     {
         bool check;
         while (true)
@@ -485,7 +487,8 @@ public class BoardController : MonoBehaviour
                 AddScore = AddScore,
                 NewCircle = NewCircle
             };
-            check = checker.Check();
+            yield return checker.DoCheck();
+            check = checker.Done;
 
             Refill();
             MoveBubbleAndStone();
