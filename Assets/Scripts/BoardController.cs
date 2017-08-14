@@ -14,7 +14,17 @@ public class BoardController : MonoBehaviour
     float mid;
     float grid;
     float scale;
-    int score;
+
+    int _score;
+    int score {
+        get { 
+            return _score; 
+        } 
+        set { 
+            _score = value; 
+            scoreRenderer.text = "Score : " + value; 
+        }
+    }
     private Circle[,] board;
     private Barrier[,] barrierH;
     private Barrier[,] barrierV;
@@ -363,20 +373,6 @@ public class BoardController : MonoBehaviour
         return null;
     }
 
-    public int GetScore()
-    {
-        return score;
-    }
-    void AddScore(int s)
-    {
-        score += s;
-    }
-    void RefreshScore()
-    {
-        string newScoreText = "Score : " + score;
-        scoreRenderer.text = newScoreText;
-    }
-
     void Update()
     {
         KeyInput();
@@ -419,12 +415,9 @@ public class BoardController : MonoBehaviour
             }
             if (Input.GetKeyDown(KeyCode.R))
             {
-                // var checker = new Checker(size, board) {
-                //     RefreshScore = RefreshScore,
-                //     AddScore = AddScore,
-                //     NewCircle = NewCircle
-                // };
-                // checker.Check();
+                var checker = new Checker(size, board);
+                StartCoroutine(checker.DoCheck());
+                score += checker.Score;
                 return;
             }
             if (Input.GetKeyDown(KeyCode.T))
@@ -479,20 +472,14 @@ public class BoardController : MonoBehaviour
 
     IEnumerator AutoProgress()
     {
-        bool check;
         while (true)
         {
-            var checker = new Checker(size, board) {
-                RefreshScore = RefreshScore,
-                AddScore = AddScore,
-                NewCircle = NewCircle
-            };
+            var checker = new Checker(size, board);
             yield return checker.DoCheck();
-            check = checker.Done;
-
+            score += checker.Score;
+            if (checker.Done) { break; }
             Refill();
             MoveBubbleAndStone();
-            if (check) { break; }
         }
     }
 }

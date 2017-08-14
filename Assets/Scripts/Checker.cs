@@ -8,10 +8,7 @@ using DG.Tweening;
 public class Checker {
     private int size;
     private Circle[,] board;
-    public Func<int, int, Circle> NewCircle { get; set; }
-    public Action RefreshScore { get; set; }
-    public Action<int> AddScore { get; set; }
-
+    
     private bool[,] checkBoard;
     public Checker(int size, Circle[,] board) {
         this.size = size;
@@ -21,6 +18,7 @@ public class Checker {
     }
 
     public bool Done { get; private set; }
+    public int Score { get; private set; }
 
     public IEnumerator DoCheck()
     {
@@ -40,7 +38,6 @@ public class Checker {
             .JoinAll(deadCircles.Select(circleGO => circleGO.transform.DOScale(Vector3.zero, 1)))
             .OnComplete(() => { 
                 deadCircles.ForEach(MonoBehaviour.Destroy);
-                RefreshScore();
             })
             .WaitForCompletion();
     }
@@ -123,7 +120,7 @@ public class Checker {
         if (checkBoard[x, y] == false)
         {
             checkBoard[x, y] = true;
-            AddScore(1);
+            Score += 1;
         }
     }
     private int[] ThreeNumber(int n)
