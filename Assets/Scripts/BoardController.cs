@@ -1,46 +1,11 @@
-﻿using System.Collections;
+﻿
+using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using DG.Tweening;
 
-using System;
-public class IntVector2
-{
-    public int x;
-    public int y;
-    public IntVector2(int x, int y)
-    {
-        this.x = x;
-        this.y = y;
-    }
-}
-public class Circle
-{
-    public int value;
-    public GameObject circleObject;
-    public Attribution att;
-    public Circle() : this(0, null, Attribution.None) { }
-    public Circle(int value, GameObject circleObject) : this(value, circleObject, Attribution.None) { }
-    public Circle(int value, GameObject circleObject, Attribution att)
-    {
-        this.value = value;
-        this.circleObject = circleObject;
-        this.att = att;
-    }
-}
-public class Barrier
-{
-    public bool value;
-    public GameObject barrierObject;
-    public Barrier() : this(false, null) { }
-    public Barrier(bool value, GameObject barrierObject)
-    {
-        this.value = value;
-        this.barrierObject = barrierObject;
-    }
-}
-public enum Attribution { None, Bubble, Stone };
 public class BoardController : MonoBehaviour
 {
     public int size = 8;
@@ -80,6 +45,7 @@ public class BoardController : MonoBehaviour
     {
         Screen.SetResolution(360, 640, false);
     }
+
     void CreateBoard()
     {
         board = new Circle[size, size];
