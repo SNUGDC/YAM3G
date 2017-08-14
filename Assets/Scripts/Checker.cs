@@ -9,6 +9,7 @@ public class Checker {
     private Circle[,] board;
     private bool animate;
     private float aniTime;
+    public Func<int, int, Circle> NewCircle { get; set; }
     public Action RefreshScore { get; set; }
     public Action<int> AddScore { get; set; }
 
@@ -54,8 +55,9 @@ public class Checker {
     
     private void DeleteCircle(int x, int y)
     {
-        board[x, y].value = 0;
-        Transform ct = board[x, y].circleObject.transform;
+        var circle = board[x, y];
+        board[x, y] = null;
+        Transform ct = circle.circleObject.transform;
         RefreshScore();
         if (animate)
         {
@@ -64,12 +66,16 @@ public class Checker {
                 .OnPlay(() =>
                 {
                     Debug.Log("DeleteAnim Join : " + Time.time);
+                })
+                .OnComplete(() => {
+                    MonoBehaviour.Destroy(circle.circleObject);
                 });
             DeleteAnimation.Append(seq);
         }
         else
         {
             ct.localScale = new Vector3(0, 0, 0);
+            MonoBehaviour.Destroy(circle.circleObject);
         }
     }
 

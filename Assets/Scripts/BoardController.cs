@@ -8,9 +8,8 @@ using DG.Tweening;
 
 public class BoardController : MonoBehaviour
 {
+    public CircleSettings circleSettings;
     public int size = 8;
-    public int color = 6;
-    public int probOfBS = 32;
     public float edgeOfBoard = 2.5f;
     public float aniTime = 0.5f;
     float mid;
@@ -20,11 +19,7 @@ public class BoardController : MonoBehaviour
     private Circle[,] board;
     private Barrier[,] barrierH;
     private Barrier[,] barrierV;
-    public Sprite[] circleNoneSprites;
-    public Sprite[] circleBubbleSprites;
-    public Sprite[] circleStoneSprites;
     public Sprite[] barrierSprites;
-    public GameObject standardCircle;
     public GameObject standardBarrier;
     GameObject clickedObject;
     public Text scoreRenderer;
@@ -70,9 +65,7 @@ public class BoardController : MonoBehaviour
         {
             for (int i = 0; i < size; i++)
             {
-                board[i, j] = new Circle(NewNumber(), Instantiate(standardCircle, gameObject.transform), NewAttribution());
-                TransformPositionOfCircle(i, j);
-                ColoringCircle(board[i, j], true);
+                NewCircle(i, j);
             }
         }
         AutoProgress(false);
@@ -123,39 +116,13 @@ public class BoardController : MonoBehaviour
             }
         }
     }
-    int NewNumber()
+
+    Circle NewCircle(int x, int y)
     {
-        return ((int)(UnityEngine.Random.value * color)) + 1;
-    }
-    Attribution NewAttribution()
-    {
-        int value = (int)(UnityEngine.Random.value * probOfBS);
-        if (value == 0)
-        {
-            return Attribution.Bubble;
-        }
-        else if (value == 1)
-        {
-            return Attribution.Stone;
-        }
-        else
-        {
-            return Attribution.None;
-        }
-    }
-    void NewCircle(int x, int y, Sequence seq, bool animate)
-    {
-        Sequence tempSeq = DOTween.Sequence();
-        board[x, y].value = NewNumber();
-        board[x, y].att = NewAttribution();
-        ColoringCircle(board[x, y], !animate);
-        if (animate)
-        {
-            Transform ct = board[x, y].circleObject.transform;
-            tempSeq.Join(ct.DOScale(new Vector3(0, 0, 0), 0));
-            tempSeq.Join(ct.DOScale(new Vector3(scale, scale, 1), aniTime));
-            seq.Append(tempSeq);
-        }
+        var circle = new Circle(gameObject.transform, circleSettings);
+        board[x, y] = circle;
+        TransformPositionOfCircle(x, y);
+        return circle;
     }
     void Print(bool animate)
     {
@@ -172,45 +139,7 @@ public class BoardController : MonoBehaviour
         animation.Play();
         animationList = new List<Sequence>();
     }
-    void ColoringCircle(Circle circle, bool setScale)
-    {
-        var circleObject = circle.circleObject;
-        var value = circle.value;
-        SpriteRenderer spriteR = circleObject.GetComponent<SpriteRenderer>();
-        if (setScale)
-        {
-            circleObject.transform.localScale = new Vector3(scale, scale, 1);
-        }
-        if (value == 0)
-        {
-            spriteR.sprite = null;
-            return;
-        }
-        else
-        {
-            Sprite[] sprites;
-            switch (circle.att)
-            {
-                default:
-                    {
-                        sprites = circleNoneSprites;
-                        break;
-                    }
-                case Attribution.Bubble:
-                    {
-                        sprites = circleBubbleSprites;
-                        break;
-                    }
-                case Attribution.Stone:
-                    {
-                        sprites = circleStoneSprites;
-                        break;
-                    }
-            }
-            spriteR.sprite = sprites[value - 1];
-            return;
-        }
-    }
+    
     void DirectingBarrier(Barrier[,] b, int x, int y)
     {
         Barrier barrier = b[x, y];
@@ -232,7 +161,8 @@ public class BoardController : MonoBehaviour
 
     void TransformPositionOfCircle(int x, int y)
     {
-        board[x, y].circleObject.transform.position = new Vector3(grid / 2 + (x - mid) * grid, grid / 2 + (y - mid) * grid);
+        if (board[x, y] != null)
+            board[x, y].circleObject.transform.position = new Vector3(grid / 2 + (x - mid) * grid, grid / 2 + (y - mid) * grid);
     }
     Tween DOMovePositionOfCircle(int x, int y)
     {
@@ -336,7 +266,7 @@ public class BoardController : MonoBehaviour
         {
             for (int i = 0; i < size; i++)
             {
-                if (board[i, j].value == 0)
+                if (board[i, j] == null)
                 {
                     if (j != size - 1)
                     {
@@ -345,7 +275,7 @@ public class BoardController : MonoBehaviour
                     }
                     else
                     {
-                        NewCircle(i, j, newSeq, animate);
+                        NewCircle(i, j);
                     }
                 }
             }
@@ -633,6 +563,7 @@ public class BoardController : MonoBehaviour
                 var checker = new Checker(size, board, autoAnimation, aniTime) {
                     RefreshScore = RefreshScore,
                     AddScore = AddScore,
+                    NewCircle = NewCircle
                 };
                 checker.Check();
                 animationList.Add(checker.DeleteAnimation);
@@ -707,10 +638,11 @@ public class BoardController : MonoBehaviour
             var checker = new Checker(size, board, animate, aniTime) {
                 RefreshScore = RefreshScore,
                 AddScore = AddScore,
+                NewCircle = NewCircle
             };
             check = checker.Check();
             animationList.Add(checker.DeleteAnimation);
-            
+
             Refill(animate);
             MoveBubbleAndStone(animate);
             if (check) { break; }
