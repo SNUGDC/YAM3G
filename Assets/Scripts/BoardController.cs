@@ -18,10 +18,8 @@ public class BoardController : MonoBehaviour
     float scale;
     int score;
     private Circle[,] board;
-    private bool[,] checkBoard;
     private Barrier[,] barrierH;
     private Barrier[,] barrierV;
-    private List<IntVector2> checkedList;
     public Sprite[] circleNoneSprites;
     public Sprite[] circleBubbleSprites;
     public Sprite[] circleStoneSprites;
@@ -67,8 +65,6 @@ public class BoardController : MonoBehaviour
         ClearBoard();
         CreateBoard();
         ImportBarrier();
-        checkBoard = new bool[size, size];
-        checkedList = new List<IntVector2>();
 
         for (int j = 0; j < size; j++)
         {
@@ -77,7 +73,6 @@ public class BoardController : MonoBehaviour
                 board[i, j] = new Circle(NewNumber(), Instantiate(standardCircle, gameObject.transform), NewAttribution());
                 TransformPositionOfCircle(i, j);
                 ColoringCircle(board[i, j], true);
-                checkBoard[i, j] = false;
             }
         }
         AutoProgress(false);
@@ -179,8 +174,8 @@ public class BoardController : MonoBehaviour
     }
     void ColoringCircle(Circle circle, bool setScale)
     {
-        GameObject circleObject = circle.circleObject;
-        int value = circle.value;
+        var circleObject = circle.circleObject;
+        var value = circle.value;
         SpriteRenderer spriteR = circleObject.GetComponent<SpriteRenderer>();
         if (setScale)
         {
@@ -553,125 +548,6 @@ public class BoardController : MonoBehaviour
         });
     }
 
-    bool Check(bool animate)
-    {
-        Sequence deleteAnimation = DOTween.Sequence();
-        deleteAnimation.SetDelay(aniTime);
-        checkedList.Clear();
-        bool done = true;
-        for (int j = 0; j < size; j++)
-        {
-            for (int i = 0; i < size; i++)
-            {
-                CheckOnce(i, j, 0, animate);
-            }
-        }
-        for (int j = 0; j < size; j++)
-        {
-            for (int i = 0; i < size; i++)
-            {
-                if (checkBoard[i, j])
-                {
-                    DeleteCircle(i, j, deleteAnimation, animate);
-                    done = false;
-                }
-                checkBoard[i, j] = false;
-            }
-        }
-        animationList.Add(deleteAnimation);
-        //animation.Insert(animation.Duration(), deleteAnimation);
-        return done;
-    }
-    void DeleteCircle(int x, int y, Sequence seq, bool animate)
-    {
-        Sequence tempSeq = DOTween.Sequence();
-        board[x, y].value = 0;
-        Transform ct = board[x, y].circleObject.transform;
-        RefreshScore();
-        if (animate)
-        {
-            tempSeq.Join(ct.DOScale(new Vector3(0, 0, 0), aniTime)).OnPlay(() =>
-            {
-                Debug.Log("DeleteAnim Join : " + Time.time);
-            });
-            seq.Append(tempSeq);
-        }
-        else
-        {
-            ct.localScale = new Vector3(0, 0, 0);
-        }
-    }
-    void CheckOnce(int x, int y, int recursiveNum, bool animate)
-    {
-        IntVector2 presentPos = new IntVector2(x, y);
-        if (!checkedList.Contains(presentPos))
-        {
-            int x0 = ThreeNumber(x)[0], x1 = ThreeNumber(x)[1], x2 = ThreeNumber(x)[2];
-            int y0 = ThreeNumber(y)[0], y1 = ThreeNumber(y)[1], y2 = ThreeNumber(y)[2];
-            bool doForX = false;
-            bool doForY = false;
-
-            if (!(checkBoard[x0, y] && checkBoard[x1, y] && checkBoard[x2, y]) &&
-            board[x1, y].value == board[x0, y].value &&
-            board[x1, y].value == board[x2, y].value &&
-            board[x1, y].value != 0)
-            {
-                doForX = true;
-                CheckOnBoard(x0, y);
-                CheckOnBoard(x1, y);
-                CheckOnBoard(x2, y);
-                if (recursiveNum != 0)
-                {
-                    checkedList.Add(presentPos);
-                }
-            }
-            if (!(checkBoard[x, y0] && checkBoard[x, y1] && checkBoard[x, y2]) &&
-                board[x, y1].value == board[x, y0].value &&
-                board[x, y1].value == board[x, y2].value &&
-                board[x, y1].value != 0)
-            {
-                doForY = true;
-                CheckOnBoard(x, y0);
-                CheckOnBoard(x, y1);
-                CheckOnBoard(x, y2);
-                if (recursiveNum != 0)
-                {
-                    checkedList.Add(presentPos);
-                }
-            }
-            if (doForX)
-            {
-                CheckOnce(x0, y, recursiveNum + 1, animate);
-                CheckOnce(x1, y, recursiveNum + 1, animate);
-                CheckOnce(x2, y, recursiveNum + 1, animate);
-            }
-            if (doForY)
-            {
-                CheckOnce(x, y0, recursiveNum + 1, animate);
-                CheckOnce(x, y1, recursiveNum + 1, animate);
-                CheckOnce(x, y2, recursiveNum + 1, animate);
-            }
-            if ((doForX || doForY) && recursiveNum == 0)
-            {
-                Debug.Log("a mount of circles");
-            }
-        }
-    }
-    void CheckOnBoard(int x, int y)
-    {
-        if (checkBoard[x, y] == false)
-        {
-            checkBoard[x, y] = true;
-            AddScore(1);
-        }
-    }
-    int[] ThreeNumber(int n)
-    {
-        if (n == 0) { return new int[] { 0, 1, 2 }; }
-        else if (n == size - 1) { return new int[] { size - 3, size - 2, size - 1 }; }
-        else { return new int[] { n - 1, n, n + 1 }; }
-    }
-
     public void SetClickedObject(GameObject clicked)
     {
         clickedObject = clicked;
@@ -754,7 +630,12 @@ public class BoardController : MonoBehaviour
             }
             if (Input.GetKeyDown(KeyCode.R))
             {
-                Check(autoAnimation);
+                var checker = new Checker(size, board, autoAnimation, aniTime) {
+                    RefreshScore = RefreshScore,
+                    AddScore = AddScore,
+                };
+                checker.Check();
+                animationList.Add(checker.DeleteAnimation);
                 return;
             }
             if (Input.GetKeyDown(KeyCode.T))
@@ -823,7 +704,13 @@ public class BoardController : MonoBehaviour
         bool check;
         while (true)
         {
-            check = Check(animate);
+            var checker = new Checker(size, board, animate, aniTime) {
+                RefreshScore = RefreshScore,
+                AddScore = AddScore,
+            };
+            check = checker.Check();
+            animationList.Add(checker.DeleteAnimation);
+            
             Refill(animate);
             MoveBubbleAndStone(animate);
             if (check) { break; }
