@@ -1,5 +1,6 @@
 using UnityEngine;
 using System;
+using System.Linq;
 using System.Collections;
 using System.Collections.Generic;
 using DG.Tweening;
@@ -24,7 +25,6 @@ public class Checker {
     public IEnumerator DoCheck()
     {
         var checkedList = new List<IntVector2>();
-        Done = true;
         for (int j = 0; j < size; j++)
         {
             for (int i = 0; i < size; i++)
@@ -33,30 +33,35 @@ public class Checker {
             }
         }
         
+        var deadCircles = CleanUpDeadCircles();
+        Done = deadCircles.Count == 0;
+
+        yield return DOTween.Sequence()
+            .JoinAll(deadCircles.Select(circleGO => circleGO.transform.DOScale(Vector3.zero, 1)))
+            .OnComplete(() => { 
+                deadCircles.ForEach(MonoBehaviour.Destroy);
+                RefreshScore();
+            })
+            .WaitForCompletion();
+    }
+
+    private List<GameObject> CleanUpDeadCircles() {
+        var list = new List<GameObject>();
         for (int j = 0; j < size; j++)
         {
             for (int i = 0; i < size; i++)
             {
                 if (checkBoard[i, j])
                 {
-                    yield return DeleteCircle(i, j);
-                    Done = false;
+                    list.Add(board[i, j].circleObject);
+                    board[i, j] = null;
                 }
             }
         }
+
+        return list;
     }
     
-    private IEnumerator DeleteCircle(int x, int y)
-    {
-        var circle = board[x, y];
-        board[x, y] = null;
-        Transform ct = circle.circleObject.transform;
-        RefreshScore();
-
-        yield return ct.DOScale(Vector3.zero, 1).WaitForCompletion();
-        MonoBehaviour.Destroy(circle.circleObject);
-    }
-
     private void CheckOnce(List<IntVector2> checkedList, int x, int y, int recursiveNum)
     {
         IntVector2 presentPos = new IntVector2(x, y);
