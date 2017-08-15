@@ -4,7 +4,8 @@ using UnityEngine;
 public enum Attribution { None, Bubble, Stone };
 
 [Serializable]
-public class CircleSettings {
+public class CircleSettings 
+{
     public int color;
     public int probOfBS;
     public Sprite[] circleNoneSprites;
@@ -18,8 +19,10 @@ public class Circle
     public int value;
     public GameObject circleObject;
     public Attribution att;
+    public static Transform parent;
+    public static CircleSettings settings;
 
-    public Circle(Transform parent, CircleSettings settings)
+    public Circle()
     {
         this.value = NewNumber(settings.color);
         this.att = NewAttribution(settings.probOfBS);

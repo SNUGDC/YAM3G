@@ -10,7 +10,9 @@ public class Checker {
     private Circle[,] board;
     
     private bool[,] checkBoard;
-    public Checker(int size, Circle[,] board) {
+    private float aniTime { get { return BoardController.aniTime; }}
+    public Checker(int size, Circle[,] board) 
+    {
         this.size = size;
         this.board = board;
         
@@ -35,14 +37,15 @@ public class Checker {
         Done = deadCircles.Count == 0;
 
         yield return DOTween.Sequence()
-            .JoinAll(deadCircles.Select(circleGO => circleGO.transform.DOScale(Vector3.zero, 1)))
+            .JoinAll(deadCircles.Select(circleGO => circleGO.transform.DOScale(Vector3.zero, aniTime)))
             .OnComplete(() => { 
                 deadCircles.ForEach(MonoBehaviour.Destroy);
             })
             .WaitForCompletion();
     }
 
-    private List<GameObject> CleanUpDeadCircles() {
+    private List<GameObject> CleanUpDeadCircles() 
+    {
         var list = new List<GameObject>();
         for (int j = 0; j < size; j++)
         {

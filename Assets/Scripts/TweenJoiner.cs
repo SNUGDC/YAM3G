@@ -2,7 +2,8 @@
 using System.Collections.Generic;
 using DG.Tweening;
 
-public static class TweenJoiner {
+public static class TweenJoiner 
+{
     public static Sequence JoinAll<T>(this Sequence seq, IEnumerable<T> tweens)
         where T: Tween 
     {

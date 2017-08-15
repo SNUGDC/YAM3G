@@ -6,7 +6,8 @@ using UnityEngine;
 using UnityEngine.UI;
 
 [Serializable]
-public class BoardSettings {
+public class BoardSettings 
+{
     public int size;
     public float edgeOfBoard;
     public float Mid { get; private set;}
@@ -19,18 +20,20 @@ public class BoardSettings {
         Scale = (8f / size) * edgeOfBoard / 2f;
     }
 }
+
 public class BoardController : MonoBehaviour
 {
     public CircleSettings circleSettings;
     public BoardSettings boardSettings;
+    public static float aniTime = 0.125f;
     int size;
-    float aniTime = 0.5f;
     float mid;
     float grid;
     float scale;
 
     int _score;
-    int score {
+    int score 
+    {
         get { 
             return _score; 
         } 
@@ -51,7 +54,7 @@ public class BoardController : MonoBehaviour
     
     void Awake()
     {
-        boardSettings.Init();
+        ImportSettings();
         CreateBoard();
         Initiate();
     }
@@ -59,7 +62,12 @@ public class BoardController : MonoBehaviour
     {
         Screen.SetResolution(360, 640, false);
     }
-
+    void ImportSettings()
+    {
+        Circle.parent = gameObject.transform;
+        Circle.settings = circleSettings;
+        boardSettings.Init();
+    }
     void CreateBoard()
     {
         size = boardSettings.size;
@@ -72,6 +80,8 @@ public class BoardController : MonoBehaviour
         clickedObject = null;
         autoMode = true;
         canInput = true;
+
+        ImportSettings();
         mid = boardSettings.Mid;
         grid = boardSettings.Grid;
         scale = boardSettings.Scale;
@@ -136,10 +146,11 @@ public class BoardController : MonoBehaviour
         }
     }
 
-    Circle NewCircle(int x, int y)
+    public Circle NewCircle(int x, int y)
     {
-        var circle = new Circle(gameObject.transform, circleSettings);
-        board[x, y] = circle;
+        var circle = new Circle();
+        circle.circleObject.transform.localScale = new Vector3(scale, scale,1);
+        board[x, y] = circle; 
         TransformPositionOfCircle(x, y);
         return circle;
     }
@@ -206,37 +217,6 @@ public class BoardController : MonoBehaviour
         MoveBarrier(bi, vectori.x, vectori.y, bf, vectorf.x, vectorf.y);
     }
 
-    void Refill()
-    {
-        bool loop = true;
-        while (loop)
-        {
-            loop = RefillOnce();
-        }
-    }
-    bool RefillOnce()
-    {
-        bool done = false;
-        for (int j = 0; j < size; j++)
-        {
-            for (int i = 0; i < size; i++)
-            {
-                if (board[i, j] == null)
-                {
-                    if (j != size - 1)
-                    {
-                        MoveCircle(i, j, i, j + 1);
-                        done = true;
-                    }
-                    else
-                    {
-                        NewCircle(i, j);
-                    }
-                }
-            }
-        }
-        return done;
-    }
     Circle CircleOfPresentPos(IntVector2 vector)
     {
         return board[vector.x, vector.y];
@@ -253,7 +233,16 @@ public class BoardController : MonoBehaviour
     {
         return IsInsideOfRange(vector.x, vector.y);
     }
-
+    IEnumerator Refill()
+    {
+        bool loop = true;
+        while (loop)
+        {
+            var refiller = new Refiller(size, board, boardSettings);
+            yield return refiller.DoRefill();
+            loop = refiller.Done;
+        }
+    }
     void RotateBoard(bool isClockwise)
     {
         Circle[,] tempBoard = new Circle[size, size];
@@ -380,7 +369,8 @@ public class BoardController : MonoBehaviour
         {
             for (int i = 0; i < size; i++)
             {
-                if (board[i, j].circleObject == circleObject)
+                //TODO : 
+                if (board[i,j] != null && board[i, j].circleObject == circleObject)
                 {
                     return new IntVector2(i, j);
                 }
@@ -426,7 +416,8 @@ public class BoardController : MonoBehaviour
             }
             if (Input.GetKeyDown(KeyCode.G))
             {
-                RefillOnce();
+                var refiller = new Refiller(size, board, boardSettings);
+                StartCoroutine(refiller.DoRefill());
                 return;
             }
             if (Input.GetKeyDown(KeyCode.R))
@@ -495,7 +486,8 @@ public class BoardController : MonoBehaviour
             score += checker.Score;
             if (checker.Done) { break; }
             
-            Refill();
+            yield return Refill();
+
             MoveBubbleAndStone();
         }
     }
