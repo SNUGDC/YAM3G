@@ -162,37 +162,12 @@ MonoBehaviour:
     - {fileID: 21300010, guid: d39109ff824f2044fa9c1e639bd704b2, type: 3}
     standardCircle: {fileID: 1369958099970036, guid: e5160bf2b8d286544b9743024a68648e,
       type: 2}
-  size: 6
-  color: 6
-  probOfBS: 18
-  edgeOfBoard: 2.5
-  aniTime: 0.5
-  circleNoneSprites:
-  - {fileID: 21300000, guid: 1ba07fbbae5be3e4ea3e8f20495239f4, type: 3}
-  - {fileID: 21300002, guid: 1ba07fbbae5be3e4ea3e8f20495239f4, type: 3}
-  - {fileID: 21300004, guid: 1ba07fbbae5be3e4ea3e8f20495239f4, type: 3}
-  - {fileID: 21300006, guid: 1ba07fbbae5be3e4ea3e8f20495239f4, type: 3}
-  - {fileID: 21300008, guid: 1ba07fbbae5be3e4ea3e8f20495239f4, type: 3}
-  - {fileID: 21300010, guid: 1ba07fbbae5be3e4ea3e8f20495239f4, type: 3}
-  circleBubbleSprites:
-  - {fileID: 21300000, guid: eeaf95a8b85522c4fbd37b9098768401, type: 3}
-  - {fileID: 21300002, guid: eeaf95a8b85522c4fbd37b9098768401, type: 3}
-  - {fileID: 21300004, guid: eeaf95a8b85522c4fbd37b9098768401, type: 3}
-  - {fileID: 21300006, guid: eeaf95a8b85522c4fbd37b9098768401, type: 3}
-  - {fileID: 21300008, guid: eeaf95a8b85522c4fbd37b9098768401, type: 3}
-  - {fileID: 21300010, guid: eeaf95a8b85522c4fbd37b9098768401, type: 3}
-  circleStoneSprites:
-  - {fileID: 21300000, guid: d39109ff824f2044fa9c1e639bd704b2, type: 3}
-  - {fileID: 21300002, guid: d39109ff824f2044fa9c1e639bd704b2, type: 3}
-  - {fileID: 21300004, guid: d39109ff824f2044fa9c1e639bd704b2, type: 3}
-  - {fileID: 21300006, guid: d39109ff824f2044fa9c1e639bd704b2, type: 3}
-  - {fileID: 21300008, guid: d39109ff824f2044fa9c1e639bd704b2, type: 3}
-  - {fileID: 21300010, guid: d39109ff824f2044fa9c1e639bd704b2, type: 3}
+  boardSettings:
+    size: 6
+    edgeOfBoard: 2.5
   barrierSprites:
   - {fileID: 21300000, guid: b8c9c39b98a439249971191b126fd71d, type: 3}
   - {fileID: 21300000, guid: 7cf6a117487a9cb49ab4e8d048b1bb1a, type: 3}
-  standardCircle: {fileID: 1369958099970036, guid: e5160bf2b8d286544b9743024a68648e,
-    type: 2}
   standardBarrier: {fileID: 1369958099970036, guid: fdb298addeeb816459451c655c6cf9be,
     type: 2}
   scoreRenderer: {fileID: 1494733349}

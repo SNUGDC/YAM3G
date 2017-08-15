@@ -5,12 +5,26 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
+[Serializable]
+public class BoardSettings {
+    public int size;
+    public float edgeOfBoard;
+    public float Mid { get; private set;}
+    public float Grid { get; private set;}
+    public float Scale { get; private set;}
+    public void Init() 
+    {
+        Mid = size / 2f;
+        Grid = 2 * edgeOfBoard / size;
+        Scale = (8f / size) * edgeOfBoard / 2f;
+    }
+}
 public class BoardController : MonoBehaviour
 {
     public CircleSettings circleSettings;
-    public int size = 8;
-    public float edgeOfBoard = 2.5f;
-    public float aniTime = 0.5f;
+    public BoardSettings boardSettings;
+    int size;
+    float aniTime = 0.5f;
     float mid;
     float grid;
     float scale;
@@ -37,6 +51,7 @@ public class BoardController : MonoBehaviour
     
     void Awake()
     {
+        boardSettings.Init();
         CreateBoard();
         Initiate();
     }
@@ -47,6 +62,7 @@ public class BoardController : MonoBehaviour
 
     void CreateBoard()
     {
+        size = boardSettings.size;
         board = new Circle[size, size];
         barrierH = new Barrier[size, size - 1];
         barrierV = new Barrier[size - 1, size];
@@ -56,10 +72,10 @@ public class BoardController : MonoBehaviour
         clickedObject = null;
         autoMode = true;
         canInput = true;
-        mid = size / 2f;
-        grid = 2 * edgeOfBoard / size;
-        scale = (8f / size) * edgeOfBoard / 2f;
-        
+        mid = boardSettings.Mid;
+        grid = boardSettings.Grid;
+        scale = boardSettings.Scale;
+
         ClearBoard();
         CreateBoard();
         ImportBarrier();
@@ -295,7 +311,7 @@ public class BoardController : MonoBehaviour
         }
 
         MoveBubbleAndStone();
-        AutoProgress();
+        StartCoroutine(AutoProgress());
     }
     void MoveBubbleAndStone()
     {
@@ -467,7 +483,7 @@ public class BoardController : MonoBehaviour
             MoveCircle(posI, posF);
         }
         clickedObject = null;
-        AutoProgress();
+        StartCoroutine(AutoProgress());
     }
 
     IEnumerator AutoProgress()
@@ -478,6 +494,7 @@ public class BoardController : MonoBehaviour
             yield return checker.DoCheck();
             score += checker.Score;
             if (checker.Done) { break; }
+            
             Refill();
             MoveBubbleAndStone();
         }

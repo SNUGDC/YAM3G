@@ -65,12 +65,12 @@ public class Circle
 
     static Attribution NewAttribution(int probOfBS)
     {
-        int value = (int)(UnityEngine.Random.value * probOfBS);
-        if (value == 0)
+        int probNum = (int)(UnityEngine.Random.value * probOfBS);
+        if (probNum == 0)
         {
             return Attribution.Bubble;
         }
-        else if (value == 1)
+        else if (probNum == 1)
         {
             return Attribution.Stone;
         }
