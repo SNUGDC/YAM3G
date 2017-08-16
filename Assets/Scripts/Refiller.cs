@@ -37,16 +37,6 @@ public class Refiller
             
         Done = !(movedCircles.Count == 0 && newCircles.Count == 0);
     }   
-    class CircleWithPos
-    {
-        public Circle circle;
-        public IntVector2 pos;
-        public CircleWithPos(Circle circle, IntVector2 pos)
-        {
-            this.circle = circle;
-            this.pos = pos;
-        }
-    }
 
     private List<CircleWithPos> CollectMovingCircles() 
     {
@@ -61,7 +51,8 @@ public class Refiller
                     board[i, j+1] = null;
                     if (board[i, j] != null)
                     { 
-                        list.Add(new CircleWithPos(board[i,j], new IntVector2(i,j)));
+                        var cwp = new CircleWithPos(board[i,j], new IntVector2(i,j));
+                        list.Add(cwp);
                     }
                 }
             }

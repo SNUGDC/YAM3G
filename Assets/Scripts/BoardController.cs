@@ -302,62 +302,17 @@ public class BoardController : MonoBehaviour
         MoveBubbleAndStone();
         StartCoroutine(AutoProgress());
     }
-    void MoveBubbleAndStone()
+    IEnumerator MoveBubbleAndStone()
     {
         bool loop = true;
         while (loop)
         {
-            loop = MoveBubble() || MoveStone();
+            var bsMover = new BubbleStoneMover(size, board, barrierH);
+            yield return bsMover.DoBSMove();
+            loop = bsMover.Done;
         }
     }
-    bool MoveBubble()
-    {
-        bool done = false;
-        for (int j = size - 1; j > -1; j--)
-        {
-            for (int i = 0; i < size; i++)
-            {
-                bool canMove = true;
-                if (j != size - 1 && barrierH[i, j].value == true)
-                {
-                    canMove = false;
-                }
-                if (canMove &&
-                    board[i, j].att == Attribution.Bubble &&
-                    IsInsideOfRange(i, j + 1) &&
-                    board[i, j + 1].att != Attribution.Bubble)
-                {
-                    MoveCircle(i, j, i, j + 1);
-                    done = true;
-                }
-            }
-        }
-        return done;
-    }
-    bool MoveStone()
-    {
-        bool done = false;
-        for (int j = 0; j < size; j++)
-        {
-            for (int i = 0; i < size; i++)
-            {
-                bool canMove = true;
-                if (j != 0 && barrierH[i, j - 1].value == true)
-                {
-                    canMove = false;
-                }
-                if (canMove &&
-                    board[i, j].att == Attribution.Stone &&
-                    IsInsideOfRange(i, j - 1) &&
-                    board[i, j - 1].att != Attribution.Stone)
-                {
-                    MoveCircle(i, j, i, j - 1);
-                    done = true;
-                }
-            }
-        }
-        return done;
-    }
+    
 
     public void SetClickedObject(GameObject clicked)
     {
@@ -488,7 +443,7 @@ public class BoardController : MonoBehaviour
             
             yield return Refill();
 
-            MoveBubbleAndStone();
+            yield return MoveBubbleAndStone();
         }
     }
 }

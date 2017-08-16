@@ -83,3 +83,14 @@ public class Circle
         }
     }
 }
+
+public class CircleWithPos
+{
+    public Circle circle;
+    public IntVector2 pos;
+    public CircleWithPos(Circle circle, IntVector2 pos)
+    {
+        this.circle = circle;
+        this.pos = pos;
+    }
+}
