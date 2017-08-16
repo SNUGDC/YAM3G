@@ -96,13 +96,16 @@ public class Refiller
         return list;
     }
 
-    Tween GenerateCircle(CircleWithPos cwp)
+    Sequence GenerateCircle(CircleWithPos cwp)
     {
         var x = cwp.pos.x;
         var y = cwp.pos.y;
         var ct = cwp.circle.circleObject.transform;
         var toVec = new Vector3(grid / 2 + (x - mid) * grid, grid / 2 + (y+1 - mid) * grid);
+        return DOTween.Sequence()
+            .Join(ct.DOMove(toVec, aniTime).From())
+            .Join(ct.DOScale(new Vector3(scale, scale, 1), aniTime));
         //return ct.DOMove(toVec, aniTime).From();
-        return ct.DOScale(new Vector3(scale, scale, 1), aniTime);
+        //return ct.DOScale(new Vector3(scale, scale, 1), aniTime);
     }
 }
