@@ -140,26 +140,26 @@ MonoBehaviour:
     color: 6
     probOfBS: 18
     circleNoneSprites:
-    - {fileID: 21300000, guid: 1ba07fbbae5be3e4ea3e8f20495239f4, type: 3}
-    - {fileID: 21300002, guid: 1ba07fbbae5be3e4ea3e8f20495239f4, type: 3}
-    - {fileID: 21300004, guid: 1ba07fbbae5be3e4ea3e8f20495239f4, type: 3}
-    - {fileID: 21300006, guid: 1ba07fbbae5be3e4ea3e8f20495239f4, type: 3}
-    - {fileID: 21300008, guid: 1ba07fbbae5be3e4ea3e8f20495239f4, type: 3}
-    - {fileID: 21300010, guid: 1ba07fbbae5be3e4ea3e8f20495239f4, type: 3}
+    - {fileID: 21300000, guid: e08ab37ee375882469399cf77c2d4d07, type: 3}
+    - {fileID: 21300000, guid: d3996b9c1a39a3f4fab05463cb3ea4c8, type: 3}
+    - {fileID: 21300000, guid: d8bb28d45fdb8514f950f6bb1fa15abf, type: 3}
+    - {fileID: 21300000, guid: 603560de9c0236646b6bfc2a48a4b417, type: 3}
+    - {fileID: 21300000, guid: 1dfaa8a11d14f4a4aa28f561f308a260, type: 3}
+    - {fileID: 21300000, guid: 5d613b7c456c6a945b709066a830c324, type: 3}
     circleBubbleSprites:
-    - {fileID: 21300000, guid: eeaf95a8b85522c4fbd37b9098768401, type: 3}
-    - {fileID: 21300002, guid: eeaf95a8b85522c4fbd37b9098768401, type: 3}
-    - {fileID: 21300004, guid: eeaf95a8b85522c4fbd37b9098768401, type: 3}
-    - {fileID: 21300006, guid: eeaf95a8b85522c4fbd37b9098768401, type: 3}
-    - {fileID: 21300008, guid: eeaf95a8b85522c4fbd37b9098768401, type: 3}
-    - {fileID: 21300010, guid: eeaf95a8b85522c4fbd37b9098768401, type: 3}
+    - {fileID: 21300000, guid: b63d2260f3768e54395fbd5f9ab4363b, type: 3}
+    - {fileID: 21300000, guid: 2c56f3caa2aec9249b4fab26085cd2a4, type: 3}
+    - {fileID: 21300000, guid: 233635349814ba94ca44b76106e2cabc, type: 3}
+    - {fileID: 21300000, guid: 49d976be7c1c68f4987440ee61a5995b, type: 3}
+    - {fileID: 21300000, guid: 6a1ebf3517216df49b8cb573598f9a06, type: 3}
+    - {fileID: 21300000, guid: e3f72127c11dd104ca6f838b996ae493, type: 3}
     circleStoneSprites:
-    - {fileID: 21300000, guid: d39109ff824f2044fa9c1e639bd704b2, type: 3}
-    - {fileID: 21300002, guid: d39109ff824f2044fa9c1e639bd704b2, type: 3}
-    - {fileID: 21300004, guid: d39109ff824f2044fa9c1e639bd704b2, type: 3}
-    - {fileID: 21300006, guid: d39109ff824f2044fa9c1e639bd704b2, type: 3}
-    - {fileID: 21300008, guid: d39109ff824f2044fa9c1e639bd704b2, type: 3}
-    - {fileID: 21300010, guid: d39109ff824f2044fa9c1e639bd704b2, type: 3}
+    - {fileID: 21300000, guid: 3a7fa04eb4b8be94badd9583435d8b4c, type: 3}
+    - {fileID: 21300000, guid: ddad97f98f4eed546ba7676cd51405f7, type: 3}
+    - {fileID: 21300000, guid: 872e0ab6fd7b35e41aacff306b532961, type: 3}
+    - {fileID: 21300000, guid: b2c52bf1495295f4f8b38858f58c1e37, type: 3}
+    - {fileID: 21300000, guid: fe8434d7e102105489394a2932568199, type: 3}
+    - {fileID: 21300000, guid: e48c3841420bd444fb8ac6cad3bca2d8, type: 3}
     standardCircle: {fileID: 1369958099970036, guid: e5160bf2b8d286544b9743024a68648e,
       type: 2}
   boardSettings:
