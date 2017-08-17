@@ -10,6 +10,7 @@ public class Refiller
     private int size;
     private Circle[,] board;
     private BoardSettings settings;
+    private int[] columnCount;
     
     private float scale { get { return settings.Scale; }}
     private float grid { get { return settings.Grid; }}
@@ -20,6 +21,7 @@ public class Refiller
         this.size = size;
         this.board = board;
         this.settings = settings;
+        columnCount = new int[size];
     }
     public bool Done { get; private set; }
 
@@ -28,7 +30,7 @@ public class Refiller
         Done = true;
         
         var movedCircles = CollectMovingCircles();
-        var newCircles = CollectingNewCircles();
+        var newCircles = CollectNewCircles();
 
         yield return DOTween.Sequence()
             .JoinAll(newCircles.Select(cwp => GenerateCircle(cwp)))
@@ -38,26 +40,41 @@ public class Refiller
         Done = !(movedCircles.Count == 0 && newCircles.Count == 0);
     }   
 
-    private List<CircleWithPos> CollectMovingCircles() 
+    List<CircleWithPos> CollectMovingCircles() 
     {
         var list = new List<CircleWithPos>();
         for (int j = 0; j < size - 1; j++)
         {
             for (int i = 0; i < size; i++)
             {
-                if (board[i, j] == null)
+                var upCwp = UpCwp(i,j);
+                if (board[i, j] == null && upCwp != null)
                 {
-                    board[i, j] = board[i, j+1];
-                    board[i, j+1] = null;
-                    if (board[i, j] != null)
-                    { 
-                        var cwp = new CircleWithPos(board[i,j], new IntVector2(i,j));
-                        list.Add(cwp);
-                    }
+                    board[i, j] = upCwp.circle;
+                    board[upCwp.pos.x, upCwp.pos.y] = null;
+
+                    var cwp = new CircleWithPos(board[i,j], new IntVector2(i,j));
+                    list.Add(cwp);
                 }
             }
         }
         return list;
+    }
+
+    CircleWithPos UpCwp(int x, int y)
+    {
+        int count = 0;
+        for (int i = x, j = y; j < size; j ++)
+        {
+            if (board[i,j] != null)
+            {
+                columnCount[i] = count;
+                var cwp = new CircleWithPos(board[i,j], new IntVector2(i,j));
+                return cwp;
+            }
+            count++;
+        }
+        return null;
     }
 
     Tween FallCircle(CircleWithPos cwp)
@@ -69,19 +86,21 @@ public class Refiller
         return ct.DOMove(toVec, aniTime);
     }
     
-    private List<CircleWithPos> CollectingNewCircles()
+    private List<CircleWithPos> CollectNewCircles()
     {
         var list = new List<CircleWithPos>();
-        
-        for (int i = 0, j = size - 1; i < size; i ++)
+        for (int j = 0; j < size; j++)
         {
-            if (board[i,j] == null)
+            for (int i = 0; i < size; i ++)
             {
-                board[i,j] = new Circle();
-                var ct = board[i,j].circleObject.transform;
-                ct.localScale = Vector3.zero;
-                ct.position = new Vector3(grid / 2 + (i - mid) * grid, grid / 2 + (j - mid) * grid);
-                list.Add(new CircleWithPos(board[i,j], new IntVector2(i,j)));
+                if (board[i,j] == null)
+                {
+                    board[i,j] = new Circle();
+                    var ct = board[i,j].circleObject.transform;
+                    ct.localScale = new Vector3(scale, scale, 1);
+                    ct.position = new Vector3(grid / 2 + (i - mid) * grid, grid / 2 + (j - mid) * grid);
+                    list.Add(new CircleWithPos(board[i,j], new IntVector2(i,j)));
+                }
             }
         }
         return list;
@@ -92,11 +111,9 @@ public class Refiller
         var x = cwp.pos.x;
         var y = cwp.pos.y;
         var ct = cwp.circle.circleObject.transform;
-        var toVec = new Vector3(grid / 2 + (x - mid) * grid, grid / 2 + (y+1 - mid) * grid);
+        var toVec = new Vector3(grid / 2 + (x - mid) * grid, grid / 2 + (y+columnCount[x]+1 - mid) * grid);
         return DOTween.Sequence()
             .Join(ct.DOMove(toVec, aniTime).From())
-            .Join(ct.DOScale(new Vector3(scale, scale, 1), aniTime));
-        //return ct.DOMove(toVec, aniTime).From();
-        //return ct.DOScale(new Vector3(scale, scale, 1), aniTime);
+            .Join(ct.DOScale(Vector3.zero, aniTime).From());
     }
 }

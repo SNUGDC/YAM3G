@@ -132,13 +132,13 @@ public class BoardController : MonoBehaviour
             {
                 if (j != size - 1)
                 {
-                    barrierH[i, j] = new Barrier(/*j == mid ? true : */false, Instantiate(standardBarrier, gameObject.transform));
+                    barrierH[i, j] = new Barrier(false, Instantiate(standardBarrier, gameObject.transform));
                     TransformPositionOfBarrier(barrierH, i, j);
                     DirectingBarrier(barrierH, i, j);
                 }
                 if (i != size - 1)
                 {
-                    barrierV[i, j] = new Barrier(/*i == mid ? true : */false, Instantiate(standardBarrier, gameObject.transform));
+                    barrierV[i, j] = new Barrier(false, Instantiate(standardBarrier, gameObject.transform));
                     TransformPositionOfBarrier(barrierV, i, j);
                     DirectingBarrier(barrierV, i, j);
                 }
@@ -203,24 +203,6 @@ public class BoardController : MonoBehaviour
     {
         MoveCircle(vectori.x, vectori.y, vectorf.x, vectorf.y);
     }
-    void MoveBarrier(Barrier[,] bi, int xi, int yi, Barrier[,] bf, int xf, int yf)
-    {
-        Barrier tempBarrier = bf[xf, yf];
-        bf[xf, yf] = bi[xi, yi];
-        bi[xi, yi] = tempBarrier;
-
-        TransformPositionOfBarrier(bi, xi, yi);
-        TransformPositionOfBarrier(bf, xf, yf);
-    }
-    void MoveBarrier(Barrier[,] bi, IntVector2 vectori, Barrier[,] bf, IntVector2 vectorf)
-    {
-        MoveBarrier(bi, vectori.x, vectori.y, bf, vectorf.x, vectorf.y);
-    }
-
-    Circle CircleOfPresentPos(IntVector2 vector)
-    {
-        return board[vector.x, vector.y];
-    }
     bool IsInsideOfRange(int x, int y)
     {
         if (x < 0) return false;
@@ -232,81 +214,7 @@ public class BoardController : MonoBehaviour
     bool IsInsideOfRange(IntVector2 vector)
     {
         return IsInsideOfRange(vector.x, vector.y);
-    }
-    IEnumerator Refill()
-    {
-        bool loop = true;
-        while (loop)
-        {
-            var refiller = new Refiller(size, board, boardSettings);
-            yield return refiller.DoRefill();
-            loop = refiller.Done;
-        }
-    }
-    void RotateBoard(bool isClockwise)
-    {
-        Circle[,] tempBoard = new Circle[size, size];
-        Barrier[,] tempBarrierH = new Barrier[size, size - 1];
-        Barrier[,] tempBarrierV = new Barrier[size - 1, size];
-        for (int j = 0; j < size; j++)
-        {
-            for (int i = 0; i < size; i++)
-            {
-                tempBoard[i, j] = board[i, j];
-                if (j != size - 1)
-                {
-                    tempBarrierH[i, j] = barrierH[i, j];
-                }
-                if (i != size - 1)
-                {
-                    tempBarrierV[i, j] = barrierV[i, j];
-                }
-            }
-        }
-        for (int j = 0; j < size; j++)
-        {
-            for (int i = 0; i < size; i++)
-            {
-                if (isClockwise)
-                { board[i, j] = tempBoard[size - 1 - j, i]; }
-                else
-                { board[i, j] = tempBoard[j, size - 1 - i]; }
-
-                TransformPositionOfCircle(i, j);
-
-                if (j != size - 1)
-                {
-                    if (isClockwise)
-                    { barrierH[i, j] = tempBarrierV[size - 2 - j, i]; }
-                    else
-                    { barrierH[i, j] = tempBarrierV[j, size - 1 - i]; }
-
-                    TransformPositionOfBarrier(barrierH, i, j);
-                    DirectingBarrier(barrierH, i, j);
-                }
-
-                if (i != size - 1)
-                {
-
-                    if (isClockwise)
-                    { barrierV[i, j] = tempBarrierH[size - 1 - j, i]; }
-                    else
-                    { barrierV[i, j] = tempBarrierH[j, size - 2 - i]; }
-
-                    TransformPositionOfBarrier(barrierV, i, j);
-                    DirectingBarrier(barrierV, i, j);
-                }
-            }
-        }
-
-        StartCoroutine(AutoProgress(2));
-    }
-    IEnumerator MoveBubbleAndStone()
-    {
-        var bsMover = new BubbleStoneMover(size, board, barrierH, boardSettings);
-        yield return bsMover.DoBSMove();
-    }
-    
+    }    
 
     public void SetClickedObject(GameObject clicked)
     {
@@ -336,94 +244,89 @@ public class BoardController : MonoBehaviour
     {
         if (Input.GetKeyDown(KeyCode.Escape))
         {
+            StopAllCoroutines();
             Initiate();
             return;
         }
-        if (Input.GetKeyDown(KeyCode.Z))
+        if(canInput)
         {
-            autoMode = !autoMode;
-            Debug.Log("Auto Mode : " + autoMode);
-            return;
-        }
-        if (Input.GetKeyDown(KeyCode.E))
-        {
-            RotateBoard(true);
-            return;
-        }
-        if (Input.GetKeyDown(KeyCode.Q))
-        {
-            RotateBoard(false);
-            return;
-        }
-
-        if (!autoMode)
-        {
-            if (Input.GetKeyDown(KeyCode.Space) || Input.GetKeyDown(KeyCode.F))
+            if (Input.GetKeyDown(KeyCode.E))
             {
-                Refill();
+                canInput = false;
+                StartCoroutine(RotateBoard(AngularDirection.Clockwise));
                 return;
             }
-            if (Input.GetKeyDown(KeyCode.G))
-            {
-                var refiller = new Refiller(size, board, boardSettings);
-                StartCoroutine(refiller.DoRefill());
-                return;
+           if (Input.GetKeyDown(KeyCode.Q))
+           {
+                canInput = false;
+               StartCoroutine(RotateBoard(AngularDirection.AntiClockwise));
+               return;
             }
-            if (Input.GetKeyDown(KeyCode.R))
+            if (clickedObject != null)
             {
-                var checker = new Checker(size, board);
-                StartCoroutine(checker.DoCheck());
-                score += checker.Score;
-                return;
-            }
-            if (Input.GetKeyDown(KeyCode.T))
-            {
-                MoveBubbleAndStone();
-                return;
-            }
-        }
-
-        if (clickedObject != null)
-        {
-            if (Input.GetKeyDown(KeyCode.W))
-            {
-                SwapObjects(0, 1);
-                return;
-            }
-            if (Input.GetKeyDown(KeyCode.A))
-            {
-                SwapObjects(-1, 0);
-                return;
-            }
-            if (Input.GetKeyDown(KeyCode.S))
-            {
-                SwapObjects(0, -1);
-                return;
-            }
-            if (Input.GetKeyDown(KeyCode.D))
-            {
-                SwapObjects(1, 0);
-                return;
+                if (Input.GetKeyDown(KeyCode.W))
+                {
+                    canInput = false;
+                    SwapObjects(0, 1);
+                    return;
+                }
+                if (Input.GetKeyDown(KeyCode.A))
+                {
+                    canInput = false;
+                    SwapObjects(-1, 0);
+                    return;
+                }
+                if (Input.GetKeyDown(KeyCode.S))
+                {
+                    canInput = false;
+                    SwapObjects(0, -1);
+                    return;
+                }
+                if (Input.GetKeyDown(KeyCode.D))
+                {   
+                    canInput = false;
+                    SwapObjects(1, 0);
+                    return;
+                }
             }
         }
     }
     public void InputMouse(int deltaX, int deltaY)
     {
-        if (clickedObject != null)
+        if (clickedObject != null && canInput)
         {
+            canInput = false;
             SwapObjects(deltaX, deltaY);
         }
     }
-    void SwapObjects(int deltaX, int deltaY)
+    IEnumerator SwapObjects(int deltaX, int deltaY)
     {
         IntVector2 posI = PositionOfCircleObject(clickedObject);
         IntVector2 posF = new IntVector2(posI.x + deltaX, posI.y + deltaY);
+        var swaper = new Swaper(size, board, boardSettings);
         if (IsInsideOfRange(posF))
         {
-            MoveCircle(posI, posF);
+            yield return swaper.DoSwap(posI, posF);
         }
         clickedObject = null;
-        StartCoroutine(AutoProgress(3));
+        var checker = new Checker(size, board);
+        checker.DoCheck();
+        if (checker.Done)
+        {
+            yield return swaper.DoSwap(posI, posF);
+        }
+        else
+        {
+            StartCoroutine(AutoProgress(3));
+        }
+        canInput = true;
+    }
+    
+    IEnumerator RotateBoard(AngularDirection dir)
+    {
+        var rotater = new Rotater(dir,size,board,barrierH,barrierV,boardSettings);
+        yield return rotater.DoRotate();
+        StartCoroutine(AutoProgress(2));
     }
 
     IEnumerator AutoProgress(int Refill1_MoveBubbleAndStone2_Check3)
@@ -451,6 +354,16 @@ public class BoardController : MonoBehaviour
             }
             magicNum = 1;
         }
-        Debug.Log("AutoProgress Ends!");
+        canInput = true;
+    }
+    IEnumerator Refill()
+    {
+        var refiller = new Refiller(size, board, boardSettings);
+        yield return refiller.DoRefill();
+    }
+    IEnumerator MoveBubbleAndStone()
+    {
+        var bsMover = new BubbleStoneMover(size, board, barrierH, boardSettings);
+        yield return bsMover.DoBSMove();
     }
 }

@@ -10,3 +10,13 @@ public class Barrier
         this.barrierObject = barrierObject;
     }
 }
+public class BarrierWithPos
+{
+    public Barrier barrier;
+    public IntVector2 pos;
+    public BarrierWithPos(Barrier barrier, IntVector2 pos)
+    {
+        this.barrier = barrier;
+        this.pos = pos;
+    }
+}
