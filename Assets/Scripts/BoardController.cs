@@ -98,7 +98,7 @@ public class BoardController : MonoBehaviour
             }
         }
         
-        StartCoroutine(AutoProgress());
+        StartCoroutine(AutoProgress(2));
         score = 0;
     }
     void ClearBoard()
@@ -299,18 +299,12 @@ public class BoardController : MonoBehaviour
             }
         }
 
-        MoveBubbleAndStone();
-        StartCoroutine(AutoProgress());
+        StartCoroutine(AutoProgress(2));
     }
     IEnumerator MoveBubbleAndStone()
     {
-        bool loop = true;
-        while (loop)
-        {
-            var bsMover = new BubbleStoneMover(size, board, barrierH);
-            yield return bsMover.DoBSMove();
-            loop = bsMover.Done;
-        }
+        var bsMover = new BubbleStoneMover(size, board, barrierH, boardSettings);
+        yield return bsMover.DoBSMove();
     }
     
 
@@ -429,21 +423,34 @@ public class BoardController : MonoBehaviour
             MoveCircle(posI, posF);
         }
         clickedObject = null;
-        StartCoroutine(AutoProgress());
+        StartCoroutine(AutoProgress(3));
     }
 
-    IEnumerator AutoProgress()
+    IEnumerator AutoProgress(int Refill1_MoveBubbleAndStone2_Check3)
     {
-        while (true)
+        var magicNum = Refill1_MoveBubbleAndStone2_Check3;
+        var loop = true;
+        while (loop)
         {
-            var checker = new Checker(size, board);
-            yield return checker.DoCheck();
-            score += checker.Score;
-            if (checker.Done) { break; }
-            
-            yield return Refill();
+            if (magicNum < 2)
+            {
+                yield return Refill();
+            }
 
-            yield return MoveBubbleAndStone();
+            if (magicNum < 3)
+            {  
+                yield return MoveBubbleAndStone();
+            }
+            
+            if (magicNum < 4)
+            {
+                var checker = new Checker(size, board);
+                yield return checker.DoCheck();
+                score += checker.Score;
+                loop = !checker.Done;            
+            }
+            magicNum = 1;
         }
+        Debug.Log("AutoProgress Ends!");
     }
 }
