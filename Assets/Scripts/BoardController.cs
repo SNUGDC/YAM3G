@@ -267,25 +267,25 @@ public class BoardController : MonoBehaviour
                 if (Input.GetKeyDown(KeyCode.W))
                 {
                     canInput = false;
-                    SwapObjects(0, 1);
+                    StartCoroutine(SwapObjects(0, 1));
                     return;
                 }
                 if (Input.GetKeyDown(KeyCode.A))
                 {
                     canInput = false;
-                    SwapObjects(-1, 0);
+                    StartCoroutine(SwapObjects(-1, 0));
                     return;
                 }
                 if (Input.GetKeyDown(KeyCode.S))
                 {
                     canInput = false;
-                    SwapObjects(0, -1);
+                    StartCoroutine(SwapObjects(0, -1));
                     return;
                 }
                 if (Input.GetKeyDown(KeyCode.D))
                 {   
                     canInput = false;
-                    SwapObjects(1, 0);
+                    StartCoroutine(SwapObjects(1, 0));
                     return;
                 }
             }
@@ -296,7 +296,7 @@ public class BoardController : MonoBehaviour
         if (clickedObject != null && canInput)
         {
             canInput = false;
-            SwapObjects(deltaX, deltaY);
+            StartCoroutine(SwapObjects(deltaX, deltaY));
         }
     }
     IEnumerator SwapObjects(int deltaX, int deltaY)
@@ -310,14 +310,14 @@ public class BoardController : MonoBehaviour
         }
         clickedObject = null;
         var checker = new Checker(size, board);
-        checker.DoCheck();
+        yield return checker.DoCheck();
         if (checker.Done)
         {
             yield return swaper.DoSwap(posI, posF);
         }
         else
         {
-            StartCoroutine(AutoProgress(3));
+            StartCoroutine(AutoProgress(1));
         }
         canInput = true;
     }
