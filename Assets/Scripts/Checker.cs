@@ -62,6 +62,34 @@ public class Checker {
         return list;
     }
     
+    List<List<CircleWithPos>> CheckLines()
+    {
+        var lists = new List<List<CircleWithPos>>();
+        var checkedPos = new List<IntVector2>();
+
+        for (int j = 0; j < size; j ++)
+        {
+            for (int i = 0; i < size; i++)
+            {
+                if (checkedPos.Contains(new IntVector2(i,j)))
+                {
+                    var line = CheckCircles(checkedPos, i, j);
+                    lists.Add (line);
+                }
+            }
+        }
+        return lists;
+    }
+    List<CircleWithPos> CheckCircles(List<IntVector2> checkedPos, int x, int y)
+    {
+        var line = new List<CircleWithPos>();
+        CheckACircle(checkedPos, line, x, y, 0);
+        return line;
+    }
+    void CheckACircle(List<IntVector2> checkedPos, List<CircleWithPos> line, int x, int y, int recursiveNum)
+    {
+        
+    }
     private void CheckOnce(List<IntVector2> checkedList, int x, int y, int recursiveNum)
     {
         IntVector2 presentPos = new IntVector2(x, y);
