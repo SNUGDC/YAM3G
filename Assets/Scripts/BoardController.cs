@@ -42,6 +42,17 @@ public class BoardController : MonoBehaviour
             scoreRenderer.text = "Score : " + value; 
         }
     }
+    int _turn;
+    int turn 
+    {
+        get { 
+            return _turn; 
+        } 
+        set { 
+            _turn = value; 
+            turnRenderer.text = "Turn : " + value; 
+        }
+    }
     private Circle[,] board;
     private Barrier[,] barrierH;
     private Barrier[,] barrierV;
@@ -49,6 +60,8 @@ public class BoardController : MonoBehaviour
     public GameObject standardBarrier;
     GameObject clickedObject;
     public Text scoreRenderer;
+    public Text turnRenderer;
+    public int initialTurn = 60;
     bool autoMode;
     bool canInput;
     
@@ -100,6 +113,7 @@ public class BoardController : MonoBehaviour
         
         StartCoroutine(AutoProgress(2));
         score = 0;
+        turn = initialTurn;
     }
     void ClearBoard()
     {
@@ -252,15 +266,13 @@ public class BoardController : MonoBehaviour
         {
             if (Input.GetKeyDown(KeyCode.E))
             {
-                canInput = false;
-                StartCoroutine(RotateBoard(AngularDirection.Clockwise));
+                InputRotate(true);
                 return;
             }
-           if (Input.GetKeyDown(KeyCode.Q))
-           {
-                canInput = false;
-               StartCoroutine(RotateBoard(AngularDirection.AntiClockwise));
-               return;
+            if (Input.GetKeyDown(KeyCode.Q))
+            {
+                InputRotate(false);
+                return;
             }
             if (clickedObject != null)
             {
@@ -291,9 +303,24 @@ public class BoardController : MonoBehaviour
             }
         }
     }
+    public void InputRotate(bool isClockwise)
+    {
+        if (canInput && turn > 0)
+        {   
+            canInput = false;
+            if (isClockwise)
+            {   
+                StartCoroutine(RotateBoard(AngularDirection.Clockwise));
+            }   
+            else
+            {
+                StartCoroutine(RotateBoard(AngularDirection.AntiClockwise));
+            }
+        }
+    }
     public void InputMouse(int deltaX, int deltaY)
     {
-        if (clickedObject != null && canInput)
+        if (clickedObject != null && canInput && turn > 0)
         {
             canInput = false;
             StartCoroutine(SwapObjects(deltaX, deltaY));
@@ -301,29 +328,40 @@ public class BoardController : MonoBehaviour
     }
     IEnumerator SwapObjects(int deltaX, int deltaY)
     {
+        canInput = false;
         IntVector2 posI = PositionOfCircleObject(clickedObject);
         IntVector2 posF = new IntVector2(posI.x + deltaX, posI.y + deltaY);
         var swaper = new Swaper(size, board, boardSettings);
         if (IsInsideOfRange(posF))
         {
+            turn--;
             yield return swaper.DoSwap(posI, posF);
-        }
-        clickedObject = null;
-        var checker = new Checker(size, board);
-        yield return checker.DoCheck();
-        if (checker.Done)
-        {
-            yield return swaper.DoSwap(posI, posF);
+            clickedObject = null;
+
+            var checker = new Checker(size, board);
+            yield return checker.DoCheck();
+            score += checker.Score;
+
+            if (checker.Done)
+            {
+                yield return swaper.DoSwap(posI, posF);
+                canInput = true;
+            }
+            else
+            {
+                StartCoroutine(AutoProgress(1));
+            }
         }
         else
         {
-            StartCoroutine(AutoProgress(1));
+            canInput = true;
+            yield return null;
         }
-        canInput = true;
     }
     
     IEnumerator RotateBoard(AngularDirection dir)
     {
+        turn--;
         var rotater = new Rotater(dir,size,board,barrierH,barrierV,boardSettings);
         yield return rotater.DoRotate();
         StartCoroutine(AutoProgress(2));
@@ -331,6 +369,7 @@ public class BoardController : MonoBehaviour
 
     IEnumerator AutoProgress(int Refill1_MoveBubbleAndStone2_Check3)
     {
+        canInput = false;
         var magicNum = Refill1_MoveBubbleAndStone2_Check3;
         var loop = true;
         while (loop)
