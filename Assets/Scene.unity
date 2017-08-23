@@ -172,7 +172,7 @@ MonoBehaviour:
     type: 2}
   scoreRenderer: {fileID: 1494733349}
   turnRenderer: {fileID: 1505438447}
-  initialTurn: 60
+  initialTurn: 30
 --- !u!4 &249165625
 Transform:
   m_ObjectHideFlags: 0

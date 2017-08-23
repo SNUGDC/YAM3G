@@ -71,26 +71,53 @@ public class Checker {
         {
             for (int i = 0; i < size; i++)
             {
-                if (checkedPos.Contains(new IntVector2(i,j)))
+                if (!checkedPos.Contains(new IntVector2(i,j)))
                 {
                     var line = new List<CircleWithPos>();
-                    CheckCircles(checkedPos, i, j);
+                    CheckCircles(checkedPos, i, j, 0);
                     lists.Add (line);
                 }
             }
         }
         return lists;
     }
-    List<IntVector2> CheckCircles(List<IntVector2> checkedPos, int x, int y)
+    List<IntVector2> CheckCircles(List<IntVector2> checkedPos, int x, int y, int recursiveNum)
     {
         var line = new List<IntVector2>();
-        CheckACircle(checkedPos, line, x, y, 0);
+        if (recursiveNum == 0)
+        {
+            var tempX = x;
+            var color = board[x,y].value;
+            while(IsInsideOfSize(tempX) && board[tempX,y].value == color) 
+            {
+                tempX++;
+            }
+            var count = IntAbs(tempX - x) + 1;
+            
+            if (count >= 3)
+            {
+                for (; tempX >= x; tempX--)
+                {
+                    var pos = new IntVector2(tempX,y);
+                    if (!checkedPos.Contains(pos))
+                    {
+                        checkedPos.Add(pos);
+                    }
+                }
+            }
+        }
+        else
+        {
+
+        }
         return line;
     }
-    void CheckACircle(List<IntVector2> checkedPos, List<IntVector2> line, int x, int y, int recursiveNum)
+    List<IntVector2> CheckACircle()
     {
-        var tempLine = new List<IntVector2>();
+        var list = new List<IntVector2>();
+        return list;
     }
+
     private void CheckOnce(List<IntVector2> checkedList, int x, int y, int recursiveNum)
     {
         IntVector2 presentPos = new IntVector2(x, y);
@@ -160,5 +187,16 @@ public class Checker {
         if (n == 0) { return new int[] { 0, 1, 2 }; }
         else if (n == size - 1) { return new int[] { size - 3, size - 2, size - 1 }; }
         else { return new int[] { n - 1, n, n + 1 }; }
+    }
+    bool IsInsideOfSize(int value)
+    {
+        if (-1 < value && value < size) { return true; }
+        else { return false; }
+    }
+
+    int IntAbs(int value)
+    {
+        if (value < 0) { return -1 * value;}
+        else { return value; }
     }
 }
