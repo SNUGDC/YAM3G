@@ -53,6 +53,7 @@ public class BoardController : MonoBehaviour
             turnRenderer.text = "Turn : " + value; 
         }
     }
+    int combo;
     private Circle[,] board;
     private Barrier[,] barrierH;
     private Barrier[,] barrierV;
@@ -331,14 +332,15 @@ public class BoardController : MonoBehaviour
         canInput = false;
         IntVector2 posI = PositionOfCircleObject(clickedObject);
         IntVector2 posF = new IntVector2(posI.x + deltaX, posI.y + deltaY);
-        var swaper = new Swaper(size, board, boardSettings);
         if (IsInsideOfRange(posF))
         {
+            combo = 1;
             turn--;
+            var swaper = new Swaper(size, board, boardSettings);
             yield return swaper.DoSwap(posI, posF);
             clickedObject = null;
 
-            var checker = new Checker(size, board);
+            var checker = new Checker(size, board, combo);
             yield return checker.DoCheck();
             score += checker.Score;
 
@@ -361,6 +363,7 @@ public class BoardController : MonoBehaviour
     
     IEnumerator RotateBoard(AngularDirection dir)
     {
+        combo = 1;
         turn--;
         var rotater = new Rotater(dir,size,board,barrierH,barrierV,boardSettings);
         yield return rotater.DoRotate();
@@ -382,11 +385,12 @@ public class BoardController : MonoBehaviour
             if (magicNum < 3)
             {  
                 yield return MoveBubbleAndStone();
+                combo++;
             }
             
             if (magicNum < 4)
             {
-                var checker = new Checker(size, board);
+                var checker = new Checker(size, board, combo);
                 yield return checker.DoCheck();
                 score += checker.Score;
                 loop = !checker.Done;            

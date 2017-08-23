@@ -8,13 +8,15 @@ using DG.Tweening;
 public class Checker {
     private int size;
     private Circle[,] board;
+    private int combo;
     
     private bool[,] checkBoard;
     private float aniTime { get { return BoardController.aniTime; }}
-    public Checker(int size, Circle[,] board) 
+    public Checker(int size, Circle[,] board, int combo) 
     {
         this.size = size;
         this.board = board;
+        this.combo = combo;
         
         this.checkBoard = new bool[size, size];
     }
@@ -24,15 +26,17 @@ public class Checker {
 
     public IEnumerator DoCheck()
     {
+        var count = new CheckCount();
         var checkedList = new List<IntVector2>();
         for (int j = 0; j < size; j++)
         {
             for (int i = 0; i < size; i++)
             {
-                CheckOnce(checkedList, i, j, 0);
+                CheckOnce(checkedList, i, j, 0, count);
             }
         }
         
+        AddScore(count, combo);
         var deadCircles = CleanUpDeadCircles();
         Done = deadCircles.Count == 0;
 
@@ -43,7 +47,12 @@ public class Checker {
             })
             .WaitForCompletion();
     }
-
+    private void AddScore(CheckCount count, int combo)
+    {
+        int value = count.count *combo;
+        Debug.Log("count, combo, value : "+count.count +", "+combo+", "  + value);
+        Score += value;
+    }
     private List<GameObject> CleanUpDeadCircles() 
     {
         var list = new List<GameObject>();
@@ -74,41 +83,52 @@ public class Checker {
                 if (!checkedPos.Contains(new IntVector2(i,j)))
                 {
                     var line = new List<CircleWithPos>();
-                    CheckCircles(checkedPos, i, j, 0);
+                    CheckCircles(checkedPos, i, j, true, 1, 0);
+                    CheckCircles(checkedPos, i, j, false, 1, 0);
                     lists.Add (line);
                 }
             }
         }
         return lists;
     }
-    List<IntVector2> CheckCircles(List<IntVector2> checkedPos, int x, int y, int recursiveNum)
+    List<IntVector2> CheckCircles(List<IntVector2> checkedPos, int x, int y, bool isX, int delta, int recursiveNum)
     {
         var line = new List<IntVector2>();
-        if (recursiveNum == 0)
+        if (delta == 0)
         {
-            var tempX = x;
-            var color = board[x,y].value;
-            while(IsInsideOfSize(tempX) && board[tempX,y].value == color) 
-            {
-                tempX++;
-            }
-            var count = IntAbs(tempX - x) + 1;
             
-            if (count >= 3)
-            {
-                for (; tempX >= x; tempX--)
-                {
-                    var pos = new IntVector2(tempX,y);
-                    if (!checkedPos.Contains(pos))
-                    {
-                        checkedPos.Add(pos);
-                    }
-                }
-            }
         }
         else
         {
+            if (isX)
+            {
+                var tempX = x;
+                var color = board[x,y].value;
+                while(IsInsideOfSize(tempX) && board[tempX,y].value == color) 
+                {
+                    tempX += delta;
+                }
+                var count = delta*(tempX - x) + 1;
 
+                if (count >= 3)
+                {
+                    var tempLine = new List<IntVector2>();
+                    for (; delta * tempX >= delta * x; tempX -= delta)
+                    {
+                        var pos = new IntVector2(tempX,y);
+                        if (!checkedPos.Contains(pos))
+                        {
+                            checkedPos.Add(pos);
+                            tempLine.Add(pos);
+                        }
+                    }
+                    
+                    foreach(var pos in tempLine)
+                    {
+                        line.Add(pos);
+                    }
+                }
+            }
         }
         return line;
     }
@@ -117,8 +137,15 @@ public class Checker {
         var list = new List<IntVector2>();
         return list;
     }
-
-    private void CheckOnce(List<IntVector2> checkedList, int x, int y, int recursiveNum)
+    class CheckCount
+    {
+        public int count;
+        public CheckCount()
+        {
+            this.count = 0;
+        }
+    }
+    private void CheckOnce(List<IntVector2> checkedList, int x, int y, int recursiveNum, CheckCount count)
     {
         IntVector2 presentPos = new IntVector2(x, y);
         if (!checkedList.Contains(presentPos))
@@ -134,9 +161,9 @@ public class Checker {
             board[x1, y].value != 0)
             {
                 doForX = true;
-                CheckOnBoard(x0, y);
-                CheckOnBoard(x1, y);
-                CheckOnBoard(x2, y);
+                CheckOnBoard(x0, y, count);
+                CheckOnBoard(x1, y, count);
+                CheckOnBoard(x2, y, count);
                 if (recursiveNum != 0)
                 {
                     checkedList.Add(presentPos);
@@ -148,9 +175,9 @@ public class Checker {
                 board[x, y1].value != 0)
             {
                 doForY = true;
-                CheckOnBoard(x, y0);
-                CheckOnBoard(x, y1);
-                CheckOnBoard(x, y2);
+                CheckOnBoard(x, y0, count);
+                CheckOnBoard(x, y1, count);
+                CheckOnBoard(x, y2, count);
                 if (recursiveNum != 0)
                 {
                     checkedList.Add(presentPos);
@@ -158,28 +185,24 @@ public class Checker {
             }
             if (doForX)
             {
-                CheckOnce(checkedList, x0, y, recursiveNum + 1);
-                CheckOnce(checkedList, x1, y, recursiveNum + 1);
-                CheckOnce(checkedList, x2, y, recursiveNum + 1);
+                CheckOnce(checkedList, x0, y, recursiveNum + 1, count);
+                CheckOnce(checkedList, x1, y, recursiveNum + 1, count);
+                CheckOnce(checkedList, x2, y, recursiveNum + 1, count);
             }
             if (doForY)
             {
-                CheckOnce(checkedList, x, y0, recursiveNum + 1);
-                CheckOnce(checkedList, x, y1, recursiveNum + 1);
-                CheckOnce(checkedList, x, y2, recursiveNum + 1);
-            }
-            if ((doForX || doForY) && recursiveNum == 0)
-            {
-                Debug.Log("a mount of circles");
+                CheckOnce(checkedList, x, y0, recursiveNum + 1, count);
+                CheckOnce(checkedList, x, y1, recursiveNum + 1, count);
+                CheckOnce(checkedList, x, y2, recursiveNum + 1, count);
             }
         }
     }
-    private void CheckOnBoard(int x, int y)
+    private void CheckOnBoard(int x, int y, CheckCount count)
     {
         if (checkBoard[x, y] == false)
         {
             checkBoard[x, y] = true;
-            Score += 1;
+            count.count++;
         }
     }
     private int[] ThreeNumber(int n)
