@@ -191,9 +191,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: da790aa01bc73ad4caa7d5607b8bf54f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  serializedSoundPlayer: {fileID: 1573709582849354, guid: b691bb911902b7143a32d09d573439ab,
+  soundPlayer: {fileID: 1573709582849354, guid: b691bb911902b7143a32d09d573439ab,
     type: 2}
-  serializedSoundClips:
+  soundClips:
   - {fileID: 8300000, guid: 2fb0e17cb04903647b9d90117c8a9333, type: 3}
   - {fileID: 8300000, guid: cea4bb8e8a04c36428d3d1ca84d49d8a, type: 3}
   - {fileID: 8300000, guid: 14aa4982763b6cb4b84c20edb7e483fe, type: 3}
@@ -775,17 +775,6 @@ MonoBehaviour:
       - m_Target: {fileID: 249165624}
         m_MethodName: InputRotate
         m_Mode: 6
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 1
-        m_CallState: 2
-      - m_Target: {fileID: 194421731}
-        m_MethodName: PlayClickSound
-        m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
           m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
@@ -1442,17 +1431,6 @@ MonoBehaviour:
       - m_Target: {fileID: 249165624}
         m_MethodName: InputRotate
         m_Mode: 6
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
-      - m_Target: {fileID: 194421731}
-        m_MethodName: PlayClickSound
-        m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
           m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
