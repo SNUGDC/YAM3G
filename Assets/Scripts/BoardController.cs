@@ -373,6 +373,6 @@ public class BoardController : MonoBehaviour
         var text = 
             "Your score is\n" 
             + score;
-        PopupController.ForcedPopup(text, 26);
+        PopupController.ForcedPopup(text);
     }
 }

@@ -174,7 +174,7 @@ Transform:
   m_GameObject: {fileID: 194421728}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 0.7, y: 0.7, z: 1}
+  m_LocalScale: {x: 0.75, y: 0.75, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
   m_RootOrder: 3
@@ -615,8 +615,8 @@ RectTransform:
   m_Father: {fileID: 476572399}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 0}
-  m_AnchorMax: {x: 1, y: 1}
+  m_AnchorMin: {x: 0.2, y: 0.1}
+  m_AnchorMax: {x: 0.8, y: 0.9}
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
@@ -643,8 +643,8 @@ MonoBehaviour:
     m_Font: {fileID: 12800000, guid: 234e7789ddb39ff40a998aa7b5b02be9, type: 3}
     m_FontSize: 14
     m_FontStyle: 0
-    m_BestFit: 0
-    m_MinSize: 10
+    m_BestFit: 1
+    m_MinSize: 14
     m_MaxSize: 40
     m_Alignment: 4
     m_AlignByGeometry: 0
@@ -983,10 +983,10 @@ RectTransform:
   m_Father: {fileID: 1391061852}
   m_RootOrder: 3
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0.6388888, y: 0.78125}
-  m_AnchorMax: {x: 0.944444, y: 0.96875}
+  m_AnchorMin: {x: 0.6666666, y: 0.796875}
+  m_AnchorMax: {x: 0.9166666, y: 0.953125}
   m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: -10, y: -10}
+  m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1088449111
 MonoBehaviour:
@@ -1061,7 +1061,7 @@ MonoBehaviour:
       Version=1.0.0.0, Culture=neutral, PublicKeyToken=null
   m_Sprite: {fileID: 21300000, guid: fc922353be6daf441b614863eaeccb43, type: 3}
   m_Type: 0
-  m_PreserveAspect: 0
+  m_PreserveAspect: 1
   m_FillCenter: 1
   m_FillMethod: 4
   m_FillAmount: 1
@@ -1148,7 +1148,18 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 1168795475}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 942705510}
+        m_MethodName: ExitGame
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
     m_TypeName: UnityEngine.UI.Button+ButtonClickedEvent, UnityEngine.UI, Version=1.0.0.0,
       Culture=neutral, PublicKeyToken=null
 --- !u!114 &1168795475
@@ -1459,11 +1470,11 @@ MonoBehaviour:
       Version=1.0.0.0, Culture=neutral, PublicKeyToken=null
   m_FontData:
     m_Font: {fileID: 12800000, guid: 234e7789ddb39ff40a998aa7b5b02be9, type: 3}
-    m_FontSize: 33
+    m_FontSize: 74
     m_FontStyle: 0
     m_BestFit: 1
-    m_MinSize: 3
-    m_MaxSize: 33
+    m_MinSize: 20
+    m_MaxSize: 76
     m_Alignment: 4
     m_AlignByGeometry: 0
     m_RichText: 1
@@ -1533,11 +1544,11 @@ MonoBehaviour:
       Version=1.0.0.0, Culture=neutral, PublicKeyToken=null
   m_FontData:
     m_Font: {fileID: 12800000, guid: 234e7789ddb39ff40a998aa7b5b02be9, type: 3}
-    m_FontSize: 33
+    m_FontSize: 74
     m_FontStyle: 0
     m_BestFit: 1
-    m_MinSize: 3
-    m_MaxSize: 33
+    m_MinSize: 20
+    m_MaxSize: 76
     m_Alignment: 4
     m_AlignByGeometry: 0
     m_RichText: 1
@@ -1649,8 +1660,8 @@ RectTransform:
   m_Father: {fileID: 1168795473}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 0}
-  m_AnchorMax: {x: 1, y: 1}
+  m_AnchorMin: {x: 0.2, y: 0.1}
+  m_AnchorMax: {x: 0.8, y: 0.9}
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
@@ -1677,8 +1688,8 @@ MonoBehaviour:
     m_Font: {fileID: 12800000, guid: 234e7789ddb39ff40a998aa7b5b02be9, type: 3}
     m_FontSize: 14
     m_FontStyle: 0
-    m_BestFit: 0
-    m_MinSize: 10
+    m_BestFit: 1
+    m_MinSize: 14
     m_MaxSize: 40
     m_Alignment: 4
     m_AlignByGeometry: 0
@@ -1749,16 +1760,16 @@ MonoBehaviour:
       Version=1.0.0.0, Culture=neutral, PublicKeyToken=null
   m_FontData:
     m_Font: {fileID: 12800000, guid: c8e896d9f9921484f9e23aa64fa125e4, type: 3}
-    m_FontSize: 13
+    m_FontSize: 12
     m_FontStyle: 0
-    m_BestFit: 0
-    m_MinSize: 1
-    m_MaxSize: 40
+    m_BestFit: 1
+    m_MinSize: 12
+    m_MaxSize: 42
     m_Alignment: 4
     m_AlignByGeometry: 0
     m_RichText: 1
     m_HorizontalOverflow: 0
-    m_VerticalOverflow: 1
+    m_VerticalOverflow: 0
     m_LineSpacing: 0.8
   m_Text: 'YAM3G
 

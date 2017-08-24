@@ -30,7 +30,6 @@ public class PopupController : MonoBehaviour {
 	}
 	static void InitText()
 	{
-		instance.textRenderer.fontSize = 13;
 		instance.textRenderer.text = 
 			"YAM3G\n"
 			+"~Yet Another Match-3 Game~\n"
@@ -55,11 +54,14 @@ public class PopupController : MonoBehaviour {
 			isActive = !isActive;
 		}
 	}
-	public static void ForcedPopup(string text, int size)
+	public static void ForcedPopup(string text)
 	{
-		instance.textRenderer.fontSize = size;
 		instance.textRenderer.text = text;
 		isActive = true;
 		isForcedPopup = true;
+	}
+	public void ExitGame()
+	{
+		Application.Quit();
 	}
 }
