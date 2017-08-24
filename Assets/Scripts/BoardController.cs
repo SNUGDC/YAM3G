@@ -74,7 +74,6 @@ public class BoardController : MonoBehaviour
     }
     void Start()
     {
-        //Screen.SetResolution(360, 640, false);
     }
     void ImportSettings()
     {
@@ -94,7 +93,7 @@ public class BoardController : MonoBehaviour
         clickedObject = null;
         autoMode = true;
         isPlayingAnimation = false;
-        PopupController.Inactivate();
+        PopupController.Initiate();
 
         ImportSettings();
         mid = boardSettings.Mid;
@@ -113,9 +112,10 @@ public class BoardController : MonoBehaviour
             }
         }
         
-        StartCoroutine(AutoProgress(2));
+        combo = 0;
         score = 0;
         turn = initialTurn;
+        StartCoroutine(AutoProgress(2));
     }
     void ClearBoard()
     {
@@ -206,18 +206,6 @@ public class BoardController : MonoBehaviour
             barrierV[x, y].barrierObject.transform.position = new Vector3(grid + (x - mid) * grid, grid / 2 + (y - mid) * grid);
             return;
         }
-    }
-    void MoveCircle(int xi, int yi, int xf, int yf)
-    {
-        Circle tempCircle = board[xf, yf];
-        board[xf, yf] = board[xi, yi];
-        board[xi, yi] = tempCircle;
-        TransformPositionOfCircle(xi, yi);
-        TransformPositionOfCircle(xf, yf);
-    }
-    void MoveCircle(IntVector2 vectori, IntVector2 vectorf)
-    {
-        MoveCircle(vectori.x, vectori.y, vectorf.x, vectorf.y);
     }
     bool IsInsideOfRange(int x, int y)
     {
@@ -365,6 +353,10 @@ public class BoardController : MonoBehaviour
             magicNum = 1;
         }
         isPlayingAnimation = false;
+        if (turn == 0)
+        {
+            ForcePopup();
+        }
     }
     IEnumerator Refill()
     {
@@ -375,5 +367,12 @@ public class BoardController : MonoBehaviour
     {
         var bsMover = new BubbleStoneMover(size, board, barrierH, boardSettings);
         yield return bsMover.DoBSMove();
+    }
+    void ForcePopup()
+    {
+        var text = 
+            "Your score is\n" 
+            + score;
+        PopupController.ForcedPopup(text, 26);
     }
 }
