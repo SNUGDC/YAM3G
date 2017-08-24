@@ -35,6 +35,9 @@ public class Refiller
         yield return DOTween.Sequence()
             .JoinAll(newCircles.Select(cwp => GenerateCircle(cwp)))
             .JoinAll(movedCircles.Select(cwp => FallCircle(cwp)))
+            .OnStart(()=>{
+                SoundManager.PlaySound(SoundType.Refill);
+            })
             .WaitForCompletion();
             
         Done = !(movedCircles.Count == 0 && newCircles.Count == 0);

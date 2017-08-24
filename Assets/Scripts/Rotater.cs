@@ -63,6 +63,9 @@ public class Rotater
             .JoinAll(circles.Select(cwp => MoveCircle(cwp)))
             .JoinAll(barrierHs.Select(bwpH => MoveBarrier(bwpH,true)))
             .JoinAll(barrierHs.Select(bwpV => MoveBarrier(bwpV,false)))
+            .OnStart(()=>{
+                SoundManager.PlaySound(SoundType.Rotate);
+            })
             .WaitForCompletion();
     }
 

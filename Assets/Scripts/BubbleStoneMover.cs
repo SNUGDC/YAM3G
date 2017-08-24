@@ -29,10 +29,14 @@ public class BubbleStoneMover
     {
         var movedBubbleStone = MoveBubbleStone();
         var movedCircle = CollectMovedCircles();
-        
+        bool done = (movedBubbleStone.Count == 0 && movedCircle.Count == 0);
+
         yield return DOTween.Sequence()
             .JoinAll(movedBubbleStone.Select(cwp => MoveCircle(cwp)))
             .JoinAll(movedCircle.Select(cwp => MoveCircle(cwp)))
+            .OnStart(()=>{
+                if (!done) SoundManager.PlaySound(SoundType.MoveBS);
+            })
             .WaitForCompletion();
     }
 

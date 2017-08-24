@@ -30,6 +30,9 @@ public class Swaper
 
         yield return DOTween.Sequence()
             .JoinAll(swapedCircles.Select(cwp => MoveCircle(cwp)))
+            .OnStart(()=>{
+                SoundManager.PlaySound(SoundType.Swap);
+            })
             .WaitForCompletion();
     }
 

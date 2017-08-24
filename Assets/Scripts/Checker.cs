@@ -42,6 +42,9 @@ public class Checker {
 
         yield return DOTween.Sequence()
             .JoinAll(deadCircles.Select(circleGO => circleGO.transform.DOScale(Vector3.zero, aniTime)))
+            .OnStart(()=>{
+                if(!Done) SoundManager.PlaySound(SoundType.Check);
+            })
             .OnComplete(() => { 
                 deadCircles.ForEach(MonoBehaviour.Destroy);
             })

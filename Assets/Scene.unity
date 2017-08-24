@@ -117,8 +117,9 @@ GameObject:
   m_Component:
   - component: {fileID: 194421730}
   - component: {fileID: 194421729}
+  - component: {fileID: 194421731}
   m_Layer: 0
-  m_Name: Background
+  m_Name: Background&SoundManager
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -179,6 +180,32 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 3
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &194421731
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 194421728}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: da790aa01bc73ad4caa7d5607b8bf54f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  serializedSoundPlayer: {fileID: 1573709582849354, guid: b691bb911902b7143a32d09d573439ab,
+    type: 2}
+  serializedSoundClips:
+  - {fileID: 8300000, guid: 2fb0e17cb04903647b9d90117c8a9333, type: 3}
+  - {fileID: 8300000, guid: cea4bb8e8a04c36428d3d1ca84d49d8a, type: 3}
+  - {fileID: 8300000, guid: 14aa4982763b6cb4b84c20edb7e483fe, type: 3}
+  - {fileID: 8300000, guid: 5d7797214e03f71488bd84f90dcbf0c3, type: 3}
+  - {fileID: 8300000, guid: 18482ed488ac2cb4ea6d7d6ecf7082bd, type: 3}
+  - {fileID: 8300000, guid: 9b4b13b8ff8a2a94184d029fea5c4dcd, type: 3}
+  - {fileID: 8300000, guid: 39a8fd3bf6fb2a74a88077c3ae847602, type: 3}
+  - {fileID: 8300000, guid: a68dc3af5dd2d2f4db1457bee59eb6d6, type: 3}
+  - {fileID: 8300000, guid: b49fa0f24b04dc7468ce01adbb532294, type: 3}
+  - {fileID: 8300000, guid: 4f5944dd73c8cfd4aa254effa82f11be, type: 3}
+  - {fileID: 8300000, guid: 72b05f7297e5d2944863dfd6ea378b48, type: 3}
+  - {fileID: 8300000, guid: cb0670d85b974e743a65e2f79f36646c, type: 3}
 --- !u!1 &249165623
 GameObject:
   m_ObjectHideFlags: 0
@@ -550,6 +577,17 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
+      - m_Target: {fileID: 194421731}
+        m_MethodName: PlayClickSound
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
     m_TypeName: UnityEngine.UI.Button+ButtonClickedEvent, UnityEngine.UI, Version=1.0.0.0,
       Culture=neutral, PublicKeyToken=null
 --- !u!114 &476572401
@@ -737,6 +775,17 @@ MonoBehaviour:
       - m_Target: {fileID: 249165624}
         m_MethodName: InputRotate
         m_Mode: 6
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 1
+        m_CallState: 2
+      - m_Target: {fileID: 194421731}
+        m_MethodName: PlayClickSound
+        m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
           m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
@@ -1038,6 +1087,17 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
+      - m_Target: {fileID: 194421731}
+        m_MethodName: PlayClickSound
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
     m_TypeName: UnityEngine.UI.Button+ButtonClickedEvent, UnityEngine.UI, Version=1.0.0.0,
       Culture=neutral, PublicKeyToken=null
 --- !u!114 &1088449112
@@ -1151,6 +1211,17 @@ MonoBehaviour:
       m_Calls:
       - m_Target: {fileID: 942705510}
         m_MethodName: ExitGame
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+      - m_Target: {fileID: 194421731}
+        m_MethodName: PlayClickSound
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -1371,6 +1442,17 @@ MonoBehaviour:
       - m_Target: {fileID: 249165624}
         m_MethodName: InputRotate
         m_Mode: 6
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+      - m_Target: {fileID: 194421731}
+        m_MethodName: PlayClickSound
+        m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
           m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine

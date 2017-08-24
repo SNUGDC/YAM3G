@@ -93,4 +93,8 @@ public class CircleWithPos
         this.circle = circle;
         this.pos = pos;
     }
+    public static Vector2 ToVector(IntVector2 pos)
+    {
+        return new Vector2(pos.x, pos.y);
+    }
 }
