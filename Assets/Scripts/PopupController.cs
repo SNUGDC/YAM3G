@@ -39,17 +39,21 @@ public class PopupController : MonoBehaviour {
 			"YAM3G\n"
 			+"~Yet Another Match-3 Game~\n"
 			+"\n"
-			+"Designed by Park JY\n"
-			+"Developed by Son MZ\n"
+			+"Design : "
+			+"Park JaeYeong\n"
+			+"Develop : "
+			+"Son MyeongZin\n"
 			+"\n"
 			+"Special Thanks to\n"
-			+"SNUGDC && Lee SC";
+			+"SNUGDC\n"
+			+"&& Lee SeongChan";
 	}
 	public static void SwitchPopup()
 	{
 		if(!isForcedPopup)
 		{
 			isActive = !isActive;
+			SoundManager.PlaySound(SoundType.Click);
 		}
 	}
 	public void SwitchPopupNonStatic()

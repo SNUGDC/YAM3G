@@ -32,15 +32,19 @@ public class Refiller
         var movedCircles = CollectMovingCircles();
         var newCircles = CollectNewCircles();
 
+        Done = !(movedCircles.Count == 0 && newCircles.Count == 0);
+
         yield return DOTween.Sequence()
             .JoinAll(newCircles.Select(cwp => GenerateCircle(cwp)))
             .JoinAll(movedCircles.Select(cwp => FallCircle(cwp)))
             .OnStart(()=>{
-                SoundManager.PlaySound(SoundType.Refill);
+                if (Done)
+                {
+                    SoundManager.PlaySound(SoundType.Refill);
+                }
             })
             .WaitForCompletion();
             
-        Done = !(movedCircles.Count == 0 && newCircles.Count == 0);
     }   
 
     List<CircleWithPos> CollectMovingCircles() 

@@ -47,7 +47,7 @@ public class SoundManager : MonoBehaviour
             case SoundType.Swap:
                 clipNum = (int)(UnityEngine.Random.value*2)+8; break;
             case SoundType.Rotate:
-                clipNum = 11; break;
+                clipNum = 10; break;
             default:
                 clipNum = 11; break;
         }

@@ -6,7 +6,7 @@ public class MouseManager : MonoBehaviour {
 
     Vector3 posI;
     Vector3 posF;
-    public float standardDistance = 0.5f;
+    public float standardDistance = 0.3f;
 
     void Update ()
     {
