@@ -62,9 +62,9 @@ public class BoardController : MonoBehaviour
     GameObject clickedObject;
     public Text scoreRenderer;
     public Text turnRenderer;
-    public int initialTurn = 60;
+    public int initialTurn;
     bool autoMode;
-    bool canInput;
+    bool isPlayingAnimation;
     
     void Awake()
     {
@@ -74,7 +74,7 @@ public class BoardController : MonoBehaviour
     }
     void Start()
     {
-        Screen.SetResolution(360, 640, false);
+        //Screen.SetResolution(360, 640, false);
     }
     void ImportSettings()
     {
@@ -93,7 +93,8 @@ public class BoardController : MonoBehaviour
     {
         clickedObject = null;
         autoMode = true;
-        canInput = true;
+        isPlayingAnimation = false;
+        PopupController.Inactivate();
 
         ImportSettings();
         mid = boardSettings.Mid;
@@ -251,64 +252,30 @@ public class BoardController : MonoBehaviour
         return null;
     }
 
-    void Update()
+
+	void Update()
+	{
+		if (Input.GetKeyDown(KeyCode.Escape))
+		{
+			PopupController.SwitchPopup();
+		}
+	}
+
+    bool CanInput()
     {
-        KeyInput();
+        return 
+            !isPlayingAnimation
+            && !PopupController.isActive;
     }
-    void KeyInput()
+    public void Restart()
     {
-        if (Input.GetKeyDown(KeyCode.Escape))
-        {
-            StopAllCoroutines();
-            Initiate();
-            return;
-        }
-        if(canInput)
-        {
-            if (Input.GetKeyDown(KeyCode.E))
-            {
-                InputRotate(true);
-                return;
-            }
-            if (Input.GetKeyDown(KeyCode.Q))
-            {
-                InputRotate(false);
-                return;
-            }
-            if (clickedObject != null)
-            {
-                if (Input.GetKeyDown(KeyCode.W))
-                {
-                    canInput = false;
-                    StartCoroutine(SwapObjects(0, 1));
-                    return;
-                }
-                if (Input.GetKeyDown(KeyCode.A))
-                {
-                    canInput = false;
-                    StartCoroutine(SwapObjects(-1, 0));
-                    return;
-                }
-                if (Input.GetKeyDown(KeyCode.S))
-                {
-                    canInput = false;
-                    StartCoroutine(SwapObjects(0, -1));
-                    return;
-                }
-                if (Input.GetKeyDown(KeyCode.D))
-                {   
-                    canInput = false;
-                    StartCoroutine(SwapObjects(1, 0));
-                    return;
-                }
-            }
-        }
+        StopAllCoroutines();
+        Initiate();
     }
     public void InputRotate(bool isClockwise)
     {
-        if (canInput && turn > 0)
+        if (CanInput() && turn > 0)
         {   
-            canInput = false;
             if (isClockwise)
             {   
                 StartCoroutine(RotateBoard(AngularDirection.Clockwise));
@@ -321,15 +288,14 @@ public class BoardController : MonoBehaviour
     }
     public void InputMouse(int deltaX, int deltaY)
     {
-        if (clickedObject != null && canInput && turn > 0)
+        if (clickedObject != null && CanInput() && turn > 0)
         {
-            canInput = false;
             StartCoroutine(SwapObjects(deltaX, deltaY));
         }
     }
     IEnumerator SwapObjects(int deltaX, int deltaY)
     {
-        canInput = false;
+        isPlayingAnimation = true;
         IntVector2 posI = PositionOfCircleObject(clickedObject);
         IntVector2 posF = new IntVector2(posI.x + deltaX, posI.y + deltaY);
         if (IsInsideOfRange(posF))
@@ -347,7 +313,7 @@ public class BoardController : MonoBehaviour
             if (checker.Done)
             {
                 yield return swaper.DoSwap(posI, posF);
-                canInput = true;
+                isPlayingAnimation = false;
             }
             else
             {
@@ -356,13 +322,14 @@ public class BoardController : MonoBehaviour
         }
         else
         {
-            canInput = true;
+            isPlayingAnimation = false;
             yield return null;
         }
     }
     
     IEnumerator RotateBoard(AngularDirection dir)
     {
+        isPlayingAnimation = true;
         combo = 1;
         turn--;
         var rotater = new Rotater(dir,size,board,barrierH,barrierV,boardSettings);
@@ -372,7 +339,7 @@ public class BoardController : MonoBehaviour
 
     IEnumerator AutoProgress(int Refill1_MoveBubbleAndStone2_Check3)
     {
-        canInput = false;
+        isPlayingAnimation = true;
         var magicNum = Refill1_MoveBubbleAndStone2_Check3;
         var loop = true;
         while (loop)
@@ -397,7 +364,7 @@ public class BoardController : MonoBehaviour
             }
             magicNum = 1;
         }
-        canInput = true;
+        isPlayingAnimation = false;
     }
     IEnumerator Refill()
     {
