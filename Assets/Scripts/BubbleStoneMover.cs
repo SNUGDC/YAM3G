@@ -78,7 +78,9 @@ public class BubbleStoneMover
             var tempCircle = board[x,y+1];
             board[x,y+1] = board[x,y];
             board[x,y] = tempCircle;
-            if (board[x,y].att == Attribution.None && !pushedCircles.Contains(board[x,y]))
+            if ((board[x,y].att == Attribution.None && !pushedCircles.Contains(board[x,y]))
+                || (board[x,y].att == Attribution.Stone && y == 0))
+                //added for bugfix
             {
                 pushedCircles.Add(board[x,y]);
             }
