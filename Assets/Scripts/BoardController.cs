@@ -289,7 +289,6 @@ public class BoardController : MonoBehaviour
         if (IsInsideOfRange(posF))
         {
             combo = 1;
-            turn--;
             var swaper = new Swaper(size, board, boardSettings);
             yield return swaper.DoSwap(posI, posF);
             clickedObject = null;
@@ -305,8 +304,9 @@ public class BoardController : MonoBehaviour
             }
             else
             {
-                StartCoroutine(AutoProgress(1));
+                turn--;
             }
+            StartCoroutine(AutoProgress(1));
         }
         else
         {
@@ -355,6 +355,9 @@ public class BoardController : MonoBehaviour
         isPlayingAnimation = false;
         if (turn == 0)
         {
+            Debug.Log("Finale effect entered");
+            var effector = new Effector(size, board, boardSettings);
+            yield return effector.Finale();
             ForcePopup();
         }
     }
@@ -370,9 +373,9 @@ public class BoardController : MonoBehaviour
     }
     void ForcePopup()
     {
-        var text = 
-            "Your score is\n" 
-            + score;
+        var duration = size * size * aniTime / 4;
+        var text = "Your score is\n" + score;
         PopupController.ForcedPopup(text);
+        PopupController.FinaleAction(duration);
     }
 }

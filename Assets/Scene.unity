@@ -262,7 +262,7 @@ MonoBehaviour:
       type: 2}
   boardSettings:
     size: 7
-    edgeOfBoard: 2.5
+    edgeOfBoard: 2.75
   barrierSprites:
   - {fileID: 21300000, guid: b8c9c39b98a439249971191b126fd71d, type: 3}
   - {fileID: 21300000, guid: 7cf6a117487a9cb49ab4e8d048b1bb1a, type: 3}
@@ -344,7 +344,7 @@ Camera:
   m_GameObject: {fileID: 382570133}
   m_Enabled: 1
   serializedVersion: 2
-  m_ClearFlags: 1
+  m_ClearFlags: 3
   m_BackGroundColor: {r: 0.5019608, g: 0.5019608, b: 0.5019608, a: 0.5019608}
   m_NormalizedViewPortRect:
     serializedVersion: 2
@@ -357,7 +357,7 @@ Camera:
   field of view: 60
   orthographic: 1
   orthographic size: 5
-  m_Depth: -1
+  m_Depth: 0
   m_CullingMask:
     serializedVersion: 2
     m_Bits: 4294967295
@@ -549,7 +549,7 @@ MonoBehaviour:
     m_NormalColor: {r: 1, g: 1, b: 1, a: 1}
     m_HighlightedColor: {r: 0.9607843, g: 0.9607843, b: 0.9607843, a: 1}
     m_PressedColor: {r: 0.5019608, g: 0.5019608, b: 0.5019608, a: 1}
-    m_DisabledColor: {r: 0.78431374, g: 0.78431374, b: 0.78431374, a: 0.5019608}
+    m_DisabledColor: {r: 1, g: 1, b: 1, a: 1}
     m_ColorMultiplier: 1
     m_FadeDuration: 0.1
   m_SpriteState:
@@ -927,7 +927,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6731fca51666e0f4cb8864b9d6b1f78d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  background: {fileID: 455287411}
+  buttonRetry: {fileID: 476572400}
+  buttonExit: {fileID: 1168795474}
   textRenderer: {fileID: 1944070607}
+  textRetry: {fileID: 803548451}
+  textExit: {fileID: 1662945338}
 --- !u!1 &1069968182
 GameObject:
   m_ObjectHideFlags: 0
@@ -1181,7 +1186,7 @@ MonoBehaviour:
     m_NormalColor: {r: 1, g: 1, b: 1, a: 1}
     m_HighlightedColor: {r: 0.9607843, g: 0.9607843, b: 0.9607843, a: 1}
     m_PressedColor: {r: 0.5019608, g: 0.5019608, b: 0.5019608, a: 1}
-    m_DisabledColor: {r: 0.78431374, g: 0.78431374, b: 0.78431374, a: 0.5019608}
+    m_DisabledColor: {r: 1, g: 1, b: 1, a: 1}
     m_ColorMultiplier: 1
     m_FadeDuration: 0.1
   m_SpriteState:
@@ -1300,10 +1305,10 @@ MonoBehaviour:
   m_Script: {fileID: 1980459831, guid: f70555f144d8491a825f0804e09c671c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_UiScaleMode: 0
+  m_UiScaleMode: 1
   m_ReferencePixelsPerUnit: 100
   m_ScaleFactor: 1
-  m_ReferenceResolution: {x: 800, y: 600}
+  m_ReferenceResolution: {x: 480, y: 800}
   m_ScreenMatchMode: 0
   m_MatchWidthOrHeight: 0
   m_PhysicalUnit: 3

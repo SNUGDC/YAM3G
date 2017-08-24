@@ -11,5 +11,15 @@ public static class TweenJoiner
         }
         return seq;
     }
+
+    public static Sequence JoinAllDelay<T>(this Sequence seq, IEnumerable<T> tweens, float delay)
+        where T: Tween
+    {
+        foreach(var tween in tweens) {
+            seq.Join(tween).PrependInterval(delay);
+        }
+        return seq;
+
+    }
 }
 
