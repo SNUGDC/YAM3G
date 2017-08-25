@@ -94,6 +94,7 @@ public class BoardController : MonoBehaviour
         autoMode = true;
         isPlayingAnimation = false;
         PopupController.Initiate();
+        SoundManager.Initiate();
 
         ImportSettings();
         mid = boardSettings.Mid;
@@ -355,7 +356,6 @@ public class BoardController : MonoBehaviour
         isPlayingAnimation = false;
         if (turn == 0)
         {
-            Debug.Log("Finale effect entered");
             var effector = new Effector(size, board, boardSettings);
             yield return effector.Finale();
             ForcePopup();

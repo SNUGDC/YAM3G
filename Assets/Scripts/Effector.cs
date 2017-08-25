@@ -33,11 +33,11 @@ public class Effector
             listOfPos.RemoveAt(rand);
             effectStack.Add(new CircleWithPos(board[pos.x,pos.y],pos));
         }
-        Debug.Log(
-            "yield return Finale"
-        );
         yield return DOTween.Sequence()
-            .JoinAllDelay(effectStack.Select(cwp => MoveCircle(cwp)), aniTime/8);
+            .JoinAllDelay(effectStack.Select(cwp => MoveCircle(cwp)), aniTime/8)
+            .OnStart(()=>{
+                SoundManager.PlayFinale();
+            });
     }
     List<IntVector2> CollectAllPos()
     {
