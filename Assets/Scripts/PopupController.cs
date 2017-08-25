@@ -71,6 +71,7 @@ public class PopupController : MonoBehaviour {
 	}
 	public void ExitGame()
 	{
+		SaveLoad.Save();
 		Application.Quit();
 	}
 	public static void FinaleAction(float duration)
