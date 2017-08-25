@@ -42,6 +42,8 @@ public class BoardController : MonoBehaviour
             scoreRenderer.text = "Score : " + value; 
         }
     }
+    public static int highestScore;
+    public static int bestScore;
     int _turn;
     int turn 
     {
@@ -68,12 +70,19 @@ public class BoardController : MonoBehaviour
     
     void Awake()
     {
+        ImportScores();
         ImportSettings();
         CreateBoard();
         Initiate();
     }
     void Start()
     {
+    }
+    void ImportScores()
+    {
+        highestScore = 0;
+        SaveLoad.Load();
+        bestScore = SaveLoad.bestScore;
     }
     void ImportSettings()
     {
@@ -373,9 +382,27 @@ public class BoardController : MonoBehaviour
     }
     void ForcePopup()
     {
+        CommitScore();
         var duration = size * size * aniTime / 4;
-        var text = "Your score is\n" + score;
+        var text = 
+            "\n"
+            +"Your score is\n" 
+            + score + "\n"
+            +"\n"
+            +"Session Best : " + highestScore + "\n"
+            +"All-time Best : " + bestScore;
         PopupController.ForcedPopup(text);
         PopupController.FinaleAction(duration);
+    }
+    void CommitScore()
+    {
+        if (score > highestScore)
+        {
+            highestScore = score;
+        }
+        if (score > bestScore)
+        {
+            bestScore = score;
+        }
     }
 }
