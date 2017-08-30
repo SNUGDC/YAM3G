@@ -77,6 +77,7 @@ public class BoardController : MonoBehaviour
     }
     void Start()
     {
+        Screen.SetResolution(405, 720, false);
     }
     void ImportScores()
     {
