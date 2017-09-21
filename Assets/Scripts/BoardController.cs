@@ -30,6 +30,7 @@ public class BoardController : MonoBehaviour
     float mid;
     float grid;
     float scale;
+    int multiplier;
 
     int _score;
     int score 
@@ -124,6 +125,7 @@ public class BoardController : MonoBehaviour
         }
         
         combo = 0;
+        multiplier = 1;
         score = 0;
         turn = initialTurn;
         StartCoroutine(AutoProgress(2));
@@ -300,11 +302,12 @@ public class BoardController : MonoBehaviour
         if (IsInsideOfRange(posF))
         {
             combo = 1;
+            multiplier = 1;
             var swaper = new Swaper(size, board, boardSettings);
             yield return swaper.DoSwap(posI, posF);
             clickedObject = null;
 
-            var checker = new Checker(size, board, combo);
+            var checker = new Checker(size, board, combo, multiplier);
             yield return checker.DoCheck();
             score += checker.Score;
 
@@ -330,6 +333,7 @@ public class BoardController : MonoBehaviour
     {
         isPlayingAnimation = true;
         combo = 1;
+        multiplier = 2;
         turn--;
         var rotater = new Rotater(dir,size,board,barrierH,barrierV,boardSettings);
         yield return rotater.DoRotate();
@@ -356,7 +360,7 @@ public class BoardController : MonoBehaviour
             
             if (magicNum < 4)
             {
-                var checker = new Checker(size, board, combo);
+                var checker = new Checker(size, board, combo, multiplier);
                 yield return checker.DoCheck();
                 score += checker.Score;
                 loop = !checker.Done;            

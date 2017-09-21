@@ -9,14 +9,16 @@ public class Checker {
     private int size;
     private Circle[,] board;
     private int combo;
+    private int multiplier;
     
     private bool[,] checkBoard;
     private float aniTime { get { return BoardController.aniTime; }}
-    public Checker(int size, Circle[,] board, int combo) 
+    public Checker(int size, Circle[,] board, int combo, int multiplier) 
     {
         this.size = size;
         this.board = board;
         this.combo = combo;
+        this.multiplier = multiplier;
         
         this.checkBoard = new bool[size, size];
     }
@@ -36,7 +38,7 @@ public class Checker {
             }
         }
         
-        AddScore(count, combo);
+        AddScore(count);
         var deadCircles = CleanUpDeadCircles();
         Done = deadCircles.Count == 0;
 
@@ -50,10 +52,10 @@ public class Checker {
             })
             .WaitForCompletion();
     }
-    private void AddScore(CheckCount count, int combo)
+    private void AddScore(CheckCount count)
     {
-        int value = count.count *combo;
-        Debug.Log("count, combo, value : "+count.count +", "+combo+", "  + value);
+        int value = count.count * combo * multiplier;
+        Debug.Log("count, combo, multiplier, value : " + count.count + ", " + combo + ", " + multiplier + ", " + value);
         Score += value;
     }
     private List<GameObject> CleanUpDeadCircles() 
