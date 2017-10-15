@@ -198,27 +198,16 @@ MonoBehaviour:
   circleSettings:
     color: 6
     probOfBS: 15
-    circleNoneSprites:
-    - {fileID: 21300000, guid: fa69b699881412247a86e3b2ca174495, type: 3}
-    - {fileID: 21300000, guid: ec1559822847c5045a263f34f4e7c3b2, type: 3}
-    - {fileID: 21300000, guid: c4a07917d77f528448c4124000defa66, type: 3}
-    - {fileID: 21300000, guid: c1983be81bba5084baf3391731638218, type: 3}
-    - {fileID: 21300000, guid: 72ab03902d760ac49a419b56c5f94118, type: 3}
-    - {fileID: 21300000, guid: 8a77419a0fc77e44d981229bbb57d8a2, type: 3}
-    circleBubbleSprites:
-    - {fileID: 21300000, guid: d8b832ffa39ba7b4fb51f95929009b99, type: 3}
-    - {fileID: 21300000, guid: 66f87f216d900a541ab004acb5433754, type: 3}
-    - {fileID: 21300000, guid: e85b9f24ef7b77140b2908d254a30ab1, type: 3}
-    - {fileID: 21300000, guid: beb2da5d133b18b499530a0003b9c373, type: 3}
-    - {fileID: 21300000, guid: fe2b714e7ca518d4692b16980dec56c8, type: 3}
-    - {fileID: 21300000, guid: 61b5a98b7c9513d4d83794f1df6df9ee, type: 3}
-    circleStoneSprites:
-    - {fileID: 21300000, guid: cc3df15bd3a98fb478efad4f3eac8089, type: 3}
-    - {fileID: 21300000, guid: d2807fce307769a469da720fe499d0c7, type: 3}
-    - {fileID: 21300000, guid: e4bac891461df1e478ef7822fbcc0af2, type: 3}
-    - {fileID: 21300000, guid: 59e39206bf7256542a05a6180ebe81f5, type: 3}
-    - {fileID: 21300000, guid: 9b7f6f0f570118343bd0fa0f9a2ca7eb, type: 3}
-    - {fileID: 21300000, guid: a66cf6039c7ea33428bf720cf82edbfb, type: 3}
+    edgeNoneSprite: {fileID: 21300000, guid: 79ff6ac9cf166a44cb44fc720593afe6, type: 3}
+    edgeBubbleSprite: {fileID: 21300000, guid: 5303cbeafeab67b4dbc65bf056eb3e01, type: 3}
+    edgeStoneSprite: {fileID: 21300000, guid: fd7ae76fed1f37c458d82099a0884132, type: 3}
+    markSprites:
+    - {fileID: 21300000, guid: e19d7133c80b8c84cb5d67b60c6d9df6, type: 3}
+    - {fileID: 21300000, guid: 67d8c9cbc32dcf94e9619f897310700c, type: 3}
+    - {fileID: 21300000, guid: 85c11ac25120a2b419148fdc0056a3a1, type: 3}
+    - {fileID: 21300000, guid: cc6e1f0c8eff4fe4e9093f718459f662, type: 3}
+    - {fileID: 21300000, guid: af5024ca8483806499f5c76a60db9da1, type: 3}
+    - {fileID: 21300000, guid: 45275e5fd30e1d04bb1bbb092ea9aa54, type: 3}
     standardCircle: {fileID: 1369958099970036, guid: e5160bf2b8d286544b9743024a68648e,
       type: 2}
   boardSettings:

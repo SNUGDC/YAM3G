@@ -8,9 +8,10 @@ public class CircleSettings
 {
     public int color;
     public int probOfBS;
-    public Sprite[] circleNoneSprites;
-    public Sprite[] circleBubbleSprites;
-    public Sprite[] circleStoneSprites;
+    public Sprite edgeNoneSprite;
+    public Sprite edgeBubbleSprite;
+    public Sprite edgeStoneSprite;
+    public Sprite[] markSprites;
     public GameObject standardCircle;
 }
 
@@ -27,38 +28,7 @@ public class Circle
         this.value = NewNumber(settings.color);
         this.att = NewAttribution(settings.probOfBS);
         this.circleObject = MonoBehaviour.Instantiate(settings.standardCircle, parent);
-        circleObject.GetComponent<SpriteRenderer>().sprite = GetSprite(settings, value, att);
-    }
-
-    static Sprite GetSprite(CircleSettings settings, int value, Attribution att)
-    {
-        if (value == 0)
-        {
-            return null;
-        }
-        else
-        {
-            Sprite[] sprites;
-            switch (att)
-            {
-                default:
-                    {
-                        sprites = settings.circleNoneSprites;
-                        break;
-                    }
-                case Attribution.Bubble:
-                    {
-                        sprites = settings.circleBubbleSprites;
-                        break;
-                    }
-                case Attribution.Stone:
-                    {
-                        sprites = settings.circleStoneSprites;
-                        break;
-                    }
-            }
-            return sprites[value - 1];
-        }
+        circleObject.GetComponent<CircleController>().GetSprites(settings, value, att);
     }
 
     static int NewNumber(int color)
