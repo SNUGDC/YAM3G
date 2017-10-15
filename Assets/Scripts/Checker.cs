@@ -38,20 +38,30 @@ public class Checker {
             }
         }
         
-        AddScore(count);
         var deadCircles = CleanUpDeadCircles();
         Done = deadCircles.Count == 0;
 
         yield return DOTween.Sequence()
-            .JoinAll(deadCircles.Select(circleGO => circleGO.transform.DOScale(Vector3.zero, aniTime)))
+            .JoinAll(deadCircles.Select(circleGO => KillCircles(circleGO)))
             .OnStart(()=>{
                 if(!Done) SoundManager.PlaySound(SoundType.Check);
+                AddScore(count);
             })
             .OnComplete(() => { 
-                deadCircles.ForEach(MonoBehaviour.Destroy);
+                //deadCircles.ForEach(MonoBehaviour.Destroy);
             })
             .WaitForCompletion();
     }
+    Sequence KillCircles(GameObject circleGO)
+    {
+        var cctr = circleGO.GetComponent<CircleController>();
+        cctr.Suicide();
+
+        return DOTween.Sequence()
+            .Join(cctr.edge.transform.DOScale(1.414f,aniTime).SetEase(Ease.OutCirc))
+            .Join(cctr.edge.GetComponent<SpriteRenderer>().DOFade(0, aniTime).SetEase(Ease.OutCirc));
+    }
+
     private void AddScore(CheckCount count)
     {
         int value = count.count * combo * multiplier;
