@@ -218,7 +218,7 @@ MonoBehaviour:
   - {fileID: 21300000, guid: 7cf6a117487a9cb49ab4e8d048b1bb1a, type: 3}
   standardBarrier: {fileID: 1369958099970036, guid: fdb298addeeb816459451c655c6cf9be,
     type: 2}
-  scoreRenderer: {fileID: 1494733349}
+  standardScoreRenderer: {fileID: 1494733349}
   turnRenderer: {fileID: 1505438447}
   initialTurn: 30
 --- !u!4 &249165625

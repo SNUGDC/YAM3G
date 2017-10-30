@@ -32,17 +32,20 @@ public class BoardController : MonoBehaviour
     float scale;
     int multiplier;
 
-    int _score;
-    int score 
+    static int _score;
+    public static int score
     {
-        get { 
-            return _score; 
-        } 
-        set { 
-            _score = value; 
-            scoreRenderer.text = "Score : " + value; 
+        get
+        {
+            return _score;
+        }
+        set
+        {
+            _score = value;
+            scoreRenderer.text = "Score : " + _score; 
         }
     }
+    
     public static int highestScore;
     public static int bestScore;
     int _turn;
@@ -63,7 +66,8 @@ public class BoardController : MonoBehaviour
     public Sprite[] barrierSprites;
     public GameObject standardBarrier;
     GameObject clickedObject;
-    public Text scoreRenderer;
+    public Text standardScoreRenderer;
+    static Text scoreRenderer;
     public Text turnRenderer;
     public int initialTurn;
     bool autoMode;
@@ -82,6 +86,7 @@ public class BoardController : MonoBehaviour
     }
     void ImportScores()
     {
+        scoreRenderer = standardScoreRenderer;
         highestScore = 0;
         SaveLoad.Load();
         bestScore = SaveLoad.bestScore;
@@ -398,6 +403,10 @@ public class BoardController : MonoBehaviour
             +"All-time Best : " + bestScore;
         PopupController.ForcedPopup(text);
         PopupController.FinaleAction(duration);
+    }
+    public static void SetScore(int value)
+    {
+        scoreRenderer.text = "Score : " + score; 
     }
     void CommitScore()
     {
