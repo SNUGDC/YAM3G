@@ -314,7 +314,6 @@ public class BoardController : MonoBehaviour
 
             var checker = new Checker(size, board, combo, multiplier);
             yield return checker.DoCheck();
-            score += checker.Score;
 
             if (checker.Done)
             {
@@ -367,7 +366,6 @@ public class BoardController : MonoBehaviour
             {
                 var checker = new Checker(size, board, combo, multiplier);
                 yield return checker.DoCheck();
-                score += checker.Score;
                 loop = !checker.Done;            
             }
             magicNum = 1;

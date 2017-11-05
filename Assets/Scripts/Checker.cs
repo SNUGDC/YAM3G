@@ -24,7 +24,6 @@ public class Checker {
     }
 
     public bool Done { get; private set; }
-    public int Score { get; private set; }
 
     public IEnumerator DoCheck()
     {
@@ -66,7 +65,7 @@ public class Checker {
     {
         int value = count.count * combo * multiplier;
         Debug.Log("count, combo, multiplier, value : " + count.count + ", " + combo + ", " + multiplier + ", " + value);
-        Score += value;
+        BoardController.score += value;
     }
     private List<GameObject> CleanUpDeadCircles() 
     {
